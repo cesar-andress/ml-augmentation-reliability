@@ -1,0 +1,11 @@
+{
+  "original_scientific_commit": "e7a2438c5d7cefd516db3d6a7d6a6449d8a268c3",
+  "publication_freeze_commit": "fe37655247a71986b3c4a095582ec8e793cfa29a",
+  "cohort_sha256": "209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34",
+  "remote": "git@github.com-ucjc:cesar-andress/ml-augmentation-reliability.git",
+  "branch": "main",
+  "tag": "protocol-v1.2-freeze",
+  "paper_in_repository": false,
+  "intended_archive": "Zenodo",
+  "utc_verification_timestamp": "2026-08-31T22:05:47.088203+00:00"
+}
