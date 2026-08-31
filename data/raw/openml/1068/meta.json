@@ -1,0 +1,16 @@
+{
+  "openml_id": 1068,
+  "version": 1,
+  "name": "pc1",
+  "target": "defects",
+  "retrieval_timestamp_utc": "2026-08-31T21:40:59.245857+00:00",
+  "y_meta": {
+    "class_labels": [
+      "False",
+      "True"
+    ],
+    "minority_label": "True",
+    "majority_label": "False",
+    "minority_code_original": 1
+  }
+}

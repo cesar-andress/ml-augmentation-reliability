@@ -1,0 +1,37 @@
+{
+  "timestamp_utc": "2026-08-31T21:42:54.037709+00:00",
+  "protocol": "v1.2",
+  "outcome": "GO",
+  "D": 10,
+  "keep_ids": [
+    44,
+    1067,
+    1489,
+    40983,
+    42178,
+    46911,
+    46915,
+    46921,
+    46927,
+    46952
+  ],
+  "cohort_sha256": "209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34",
+  "tabarena_precedence_removals": [
+    {
+      "removed_openml_id": 40701,
+      "removed_name": "churn",
+      "retained_openml_id": 46915,
+      "retained_name": "churn",
+      "reason": "prefer_tabarena_curated_reupload",
+      "signals": "near_identical_name;tabarena_vs_other_pool;near_identical_schema;identical_rows_and_prevalence"
+    },
+    {
+      "removed_openml_id": 1494,
+      "removed_name": "qsar-biodeg",
+      "retained_openml_id": 46952,
+      "retained_name": "qsar-biodeg",
+      "reason": "prefer_tabarena_curated_reupload",
+      "signals": "near_identical_name;tabarena_vs_other_pool;near_identical_rows_same_features"
+    }
+  ]
+}

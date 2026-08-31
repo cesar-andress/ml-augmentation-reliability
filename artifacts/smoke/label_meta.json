@@ -1,0 +1,9 @@
+{
+  "class_labels": [
+    "tested_negative",
+    "tested_positive"
+  ],
+  "minority_label": "tested_positive",
+  "majority_label": "tested_negative",
+  "minority_code_original": 1
+}

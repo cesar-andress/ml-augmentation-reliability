@@ -1,0 +1,16 @@
+{
+  "openml_id": 29,
+  "version": 1,
+  "name": "credit-approval",
+  "target": "class",
+  "retrieval_timestamp_utc": "2026-08-31T21:40:43.062036+00:00",
+  "y_meta": {
+    "class_labels": [
+      "+",
+      "-"
+    ],
+    "minority_label": "+",
+    "majority_label": "-",
+    "minority_code_original": 0
+  }
+}

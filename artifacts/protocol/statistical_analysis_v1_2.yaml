@@ -1,0 +1,68 @@
+version: "1.2"
+issued_utc: "2026-08-31T21:37:00Z"
+status: FROZEN_SPEC_NOT_EXECUTED
+primary_unit_of_inference: dataset
+
+primary_endpoint: raw_TEST_log_loss
+
+per_fold_contrast: |
+  delta[d,l,a,f] = LogLoss[d,l,a,f] - LogLoss[d,l,A0,f]
+
+dataset_learner_arm_mean: |
+  mean_delta[d,l,a] = mean over the 10 outer folds of delta[d,l,a,f]
+
+H01_Delta: |
+  Delta[d] = mean over all 4 learners and all 3 augmentation arms of mean_delta[d,l,a]
+  Centre of symmetry of Delta[d] = 0
+
+H02_Psi: |
+  Psi[d] = mean over the 2 foundation learners and 3 arms
+           minus
+           mean over the 2 GBDT learners and 3 arms
+  Centre of symmetry of Psi[d] = 0
+
+confirmatory_test:
+  name: exact_two_sided_sign_flip_permutation
+  enumerate: all_2_to_the_D_sign_assignments
+  statistic: one_sample_studentized_mean_t
+  alpha_per_hypothesis: 0.025
+  multiplicity: Bonferroni_two_confirmatory_hypotheses
+  no_fold_level_independent_df: true
+  no_learner_or_arm_level_confirmatory_hypothesis: true
+
+confidence_intervals:
+  primary_effects: [mean_Delta_d, mean_Psi_d]
+  method: invert_exact_sign_flip_test
+  descriptive_95pct_grid_resolution: observed_vector_range_div_1000
+  note: >
+    Do not reinterpret the descriptive 95% CI as a multiplicity-adjusted
+    simultaneous interval. Confirmatory p-value threshold remains alpha=0.025
+    per hypothesis.
+
+secondary_endpoints_exploratory:
+  - AUROC
+  - calibration_slope_intercept
+  - conformal_average_set_size
+  - F1_at_CAL_A_tuned_threshold
+  aggregation: dataset_level_before_inference
+  confirmatory_p_values: false
+  secondary_primary_endpoint_contrasts_exploratory:
+    - Platt_recalibrated_log_loss_effect
+    - A0plus_versus_A0_for_GBDTs
+
+moderators_descriptive_only:
+  - log_treatment_intensity_r
+  - log_n_rows
+  hypothesis_test: false
+  p_values: false
+
+mixed_model_status: SUPPLEMENTARY_PENDING_IMPLEMENTATION_VALIDATION
+mixed_model_note: >
+  v1.1 MixedLM is NOT primary. Do not claim Kenward-Roger via statsmodels.MixedLM
+  unless independently verified. Confirmatory study does not depend on MixedLM.
+
+sensitivity_analyses_exactly_three:
+  - TFM_softmax_temperature_0.9
+  - isotonic_instead_of_Platt
+  - exclude_datasets_with_minority_count_lt_400
+  operate_on: dataset_level_values

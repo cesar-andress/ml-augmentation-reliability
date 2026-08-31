@@ -1,0 +1,125 @@
+resolved_openml_id,dataset_name,source_pool,objective_eligible,suspected_issue,evidence,proposed_decision,decision,decision_reason,review_status
+30,page-blocks,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+43,haberman,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+310,mammography,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+733,machine_cpu,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+735,cpu_small,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+796,cpu,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+821,house_16H,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+833,bank32nh,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+843,house_8L,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+846,elevators,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+949,arsenic-female-bladder,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+971,mfeat-fourier,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+976,JapaneseVowels,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+977,letter,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+980,optdigits,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+994,vehicle,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+995,mfeat-zernike,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1016,vowel,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1019,pendigits,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1020,mfeat-karhunen,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1021,page-blocks,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+1046,mozilla4,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1049,pc4,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1050,pc3,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1054,mc2,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1067,kc1,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+1068,pc1,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1217,Click_prediction_small,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1464,blood-transfusion-service-center,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1475,first-order-theorem-proving,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1487,ozone-level-8hr,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1489,phoneme,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+1490,planning-relax,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1506,thoracic-surgery,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1508,user-knowledge,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1509,walking-activity,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1511,wholesale-customers,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1524,vertebra-column,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1558,bank-marketing,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1565,heart-h,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+1600,SPECTF,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+40671,ecoli,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+40707,allbp,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+40713,dis,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+40900,Satellite,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+40983,wilt,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+41150,MiniBooNE,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+41156,ada,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+41168,jannis,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+41169,helena,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+41671,microaggregation2,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+41945,ilpd-numeric,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+41946,Sick_numeric,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+42178,telco-customer-churn,climb,True,,,KEEP,KEEP,climb_official_list_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+42397,CreditCardFraudDetection,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+42477,default-of-credit-card-clients,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+43439,Medical-Appointment-No-Shows,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+43551,Employee-Turnover-at-TECHCO,climb,False,C_simulated_or_synthetic;J_unclear_provenance,C_simulated_or_synthetic:Context These are simulated data based on employee turnover data in | J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+43893,ibm-employee-attrition,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+43903,Diabetes-130-Hospitals_(Fairlearn),climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+43904,law-school-admission-bianry,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+43925,eucalyptus,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+44232,UCI_churn,climb,True,A_duplicate_derivative,Human decision 2026-08-31: 3333-row UCI_churn is probable subset/variant of classic telecom churn; TabArena churn OpenML 46915 is the 5000-row counterpart in the candidate universe.,EXCLUDE,EXCLUDE,"Probable subset/variant of the 5,000-row classic telecom churn dataset; excluded conservatively to preserve dataset-level independence.",HUMAN_RESOLVED
+45067,okcupid_stem,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+45068,adult,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+45548,Otto-Group-Product-Classification-Challenge,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+45558,Pulsar-Dataset-HTRU2,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+45560,online-shoppers-intention,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+45562,seismic-bumps,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+45717,bwin_amlb,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46281,insurance_company,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46362,Customer_Churn_Classification,climb,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46503,Credit_Approval_Classification,climb,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46904,airfoil_self_noise,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46905,Amazon_employee_access,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46906,anneal,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46907,Another-Dataset-on-used-Fiat-500,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46908,APSFailure,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46910,bank-marketing,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46911,Bank_Customer_Churn,tabarena_v0.1,True,,,KEEP,KEEP,tabarena_v0.1_curated_iid_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+46912,Bioresponse,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46913,blood-transfusion-service-center,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46915,churn,tabarena_v0.1,True,,,KEEP,KEEP,tabarena_v0.1_curated_iid_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+46916,coil2000_insurance_policies,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46917,concrete_compressive_strength,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46918,credit-g,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46919,credit_card_clients_default,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46920,customer_satisfaction_in_airline,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46921,diabetes,tabarena_v0.1,True,,,KEEP,KEEP,tabarena_v0.1_curated_iid_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+46922,Diabetes130US,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46923,diamonds,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46924,E-CommereShippingData,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46927,Fitness_Club,tabarena_v0.1,True,,,KEEP,KEEP,tabarena_v0.1_curated_iid_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+46928,Food_Delivery_Time,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46929,GiveMeSomeCredit,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46930,hazelnut-spread-contaminant-detection,tabarena_v0.1,True,,,KEEP,KEEP,tabarena_v0.1_curated_iid_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+46931,healthcare_insurance_expenses,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46932,heloc,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46933,hiva_agnostic,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46934,houses,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46935,HR_Analytics_Job_Change_of_Data_Scientists,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46937,in_vehicle_coupon_recommendation,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46938,Is-this-a-good-customer,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46939,kddcup09_appetency,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46940,Marketing_Campaign,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46941,maternal_health_risk,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46942,miami_housing,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46947,online_shoppers_intention,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46949,physiochemical_protein,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46950,polish_companies_bankruptcy,tabarena_v0.1,False,C_simulated_or_synthetic,C_simulated_or_synthetic:. Tomczak. 'Ensemble boosted trees with synthetic features generation in application to b,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46952,qsar-biodeg,tabarena_v0.1,True,,,KEEP,KEEP,tabarena_v0.1_curated_iid_no_semantic_keyword_hits,PROPOSED_KEEP_METADATA_CLEAR
+46953,QSAR-TID-11,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46954,QSAR_fish_toxicity,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46955,SDSS17,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46956,seismic-bumps,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46958,splice,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46960,students_dropout_and_academic_success,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46961,superconductivity,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46962,taiwanese_bankruptcy_prediction,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46963,website_phishing,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46964,wine_quality,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46969,NATICUSdroid,tabarena_v0.1,False,,,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46979,jm1,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL
+46980,MIC,tabarena_v0.1,False,J_unclear_provenance,J_unclear_provenance:OpenML categorical_indicator vs observed dtype disagreement,EXCLUDE,EXCLUDE,failed_objective_filters,N/A_OBJECTIVE_FAIL

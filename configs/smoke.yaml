@@ -1,0 +1,89 @@
+# Smoke-test configuration — NOT a full scientific campaign.
+# Cells using A3 TabDDPM with tiny generator settings are marked SMOKE_ONLY_NOT_SCIENTIFIC.
+# XGBoost/CatBoost use fixed hparams marked SMOKE_ONLY_FIXED_HPARAMS.
+
+experiment:
+  name: smoke
+  n_splits: 5
+  n_repeats: 2
+  outer_fold_index: 0   # ONE outer fold only for smoke
+  repeat_index: 0
+  seed: 42
+  alpha_conformal: 0.10
+  temperature: 1.0
+
+dataset:
+  # Near-eligible public binary dataset for fast smoke (OpenML)
+  # blood-transfusion-service-center is small; we use a larger near-eligible set.
+  # Selected after Stage A screen of a tiny candidate list (not full suite download).
+  openml_id: 37   # diabetes (Pima) — binary, modest size; smoke path only
+  name: diabetes
+
+split:
+  test_size: 0.20
+  # Of remaining 80%: TRAIN 62.5%, CAL-A 18.75%, CAL-B 18.75%
+  train_frac_of_remainder: 0.625
+  cal_a_frac_of_remainder: 0.1875
+  cal_b_frac_of_remainder: 0.1875
+
+preprocessing:
+  unknown_category_sentinel: -1
+
+augmentation:
+  arms: [A0, A1, A2, A3]
+  smote_k_neighbors: 5
+  a3_smoke:
+    n_iter: 2
+    batch_size: 64
+    num_timesteps: 10
+    mark: SMOKE_ONLY_NOT_SCIENTIFIC
+
+learners:
+  smoke_cells: [xgboost, catboost, tabpfn, tabicl]
+  a3_required: [xgboost]
+  a3_optional_tfm: []
+  xgboost:
+    mark: SMOKE_ONLY_FIXED_HPARAMS
+    device: cuda
+    tree_method: hist
+    max_depth: 4
+    n_estimators: 50
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    eval_metric: logloss
+  catboost:
+    mark: SMOKE_ONLY_FIXED_HPARAMS
+    task_type: GPU
+    iterations: 50
+    depth: 4
+    learning_rate: 0.1
+    verbose: false
+  tabpfn:
+    model_path: checkpoints/tabpfn/tabpfn-v2-classifier.ckpt
+    n_estimators: 8
+    inference_precision: float32
+    n_preprocessing_jobs: 1
+    random_state: 0
+    ignore_pretraining_limits: false
+    softmax_temperature: 1.0
+  tabicl:
+    model_path: checkpoints/tabicl/tabicl-classifier-v1-20250208.ckpt
+    checkpoint_version: tabicl-classifier-v1-20250208.ckpt
+    use_amp: false
+    n_estimators: 8
+    batch_size: 8
+    average_logits: true
+    random_state: 42
+    softmax_temperature: 1.0
+
+paths:
+  results_raw: results/raw
+  manifests: artifacts/manifests
+  smoke: artifacts/smoke
+  logs: artifacts/logs
+  a3_jobs: artifacts/smoke/a3_jobs
+
+envs:
+  main_python: .venv_main/bin/python
+  synthcity_python: .venv_synthcity/bin/python

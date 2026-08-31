@@ -1,0 +1,17 @@
+# Curated OpenML IDs for Stage A/B screening without downloading the full TabArena suite.
+# Full suite 457 / CLIMB metadata expansion is deferred (STOP condition).
+source_pool: curated_smoke_list_not_full_tabarena
+openml_ids:
+  - 37
+  - 31
+  - 1510
+  - 1067
+  - 1068
+  - 1049
+  - 1050
+  - 1464
+  - 40701
+  - 44
+  - 29
+  - 15
+  - 1487

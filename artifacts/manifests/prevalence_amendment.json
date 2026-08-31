@@ -1,0 +1,14 @@
+{
+  "date_utc": "2026-08-31T21:14:51.098217+00:00",
+  "used": true,
+  "reason": "final_qualifying_count_below_15_after_human_exclude_44232",
+  "number_before_amendment": 13,
+  "number_after_amendment": 14,
+  "rule_changed": "minority_prevalence_upper_0.40_to_0.50",
+  "other_rules_changed": false,
+  "newly_eligible_due_to_amendment": [
+    46930
+  ],
+  "outcome": "DATASET_COHORT_NO_GO",
+  "stop_rule": "count < 15 after sole authorized prevalence amendment"
+}

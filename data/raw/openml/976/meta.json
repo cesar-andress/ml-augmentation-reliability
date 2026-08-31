@@ -1,0 +1,16 @@
+{
+  "openml_id": 976,
+  "version": 2,
+  "name": "JapaneseVowels",
+  "target": "binaryClass",
+  "retrieval_timestamp_utc": "2026-08-31T21:14:16.420822+00:00",
+  "y_meta": {
+    "class_labels": [
+      "P",
+      "N"
+    ],
+    "minority_label": "P",
+    "majority_label": "N",
+    "minority_code_original": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "openml_id": 1020,
+  "version": 2,
+  "name": "mfeat-karhunen",
+  "target": "binaryClass",
+  "retrieval_timestamp_utc": "2026-08-31T21:14:16.610518+00:00",
+  "y_meta": {
+    "class_labels": [
+      "P",
+      "N"
+    ],
+    "minority_label": "P",
+    "majority_label": "N",
+    "minority_code_original": 0
+  }
+}

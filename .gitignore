@@ -1,0 +1,22 @@
+.venv_main/
+.venv_synthcity/
+__pycache__/
+*.pyc
+.pytest_cache/
+.cache/
+artifacts/logs/
+artifacts/smoke/a3_jobs/
+artifacts/smoke/gpu_a3_*/
+results/predictions/
+data/raw/openml/**/X.parquet
+data/raw/openml/**/y.parquet
+*.ckpt
+.DS_Store
+openml_cache/
+
+# Paper / manuscript boundary (materials live outside this repo at ~/papers/ml/paper)
+paper/
+manuscript/
+submission/
+*.env
+.env.*

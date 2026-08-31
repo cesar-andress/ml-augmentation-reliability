@@ -1,0 +1,16 @@
+{
+  "openml_id": 46912,
+  "version": 4,
+  "name": "Bioresponse",
+  "target": "MoleculeElicitsResponse",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:30.978115+00:00",
+  "y_meta": {
+    "class_labels": [
+      "No",
+      "Yes"
+    ],
+    "minority_label": "No",
+    "majority_label": "Yes",
+    "minority_code_original": 0
+  }
+}

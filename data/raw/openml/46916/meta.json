@@ -1,0 +1,16 @@
+{
+  "openml_id": 46916,
+  "version": 1,
+  "name": "coil2000_insurance_policies",
+  "target": "MobileHomePolicy",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:31.410184+00:00",
+  "y_meta": {
+    "class_labels": [
+      "No",
+      "Yes"
+    ],
+    "minority_label": "Yes",
+    "majority_label": "No",
+    "minority_code_original": 1
+  }
+}

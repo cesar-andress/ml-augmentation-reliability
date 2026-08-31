@@ -1,0 +1,27 @@
+# Main scientific environment (Python >=3.12)
+# Incompatible with synthcity==0.2.12 (torch/xgboost/numpy pins) — see requirements-synthcity.txt
+xgboost==3.4.1
+catboost==1.2.10
+tabpfn==8.5.0
+tabicl==2.1.1
+imbalanced-learn==0.14.2
+scikit-learn==1.9.0
+statsmodels
+openml
+pandas
+numpy
+scipy
+pyarrow
+pyyaml
+joblib
+psutil
+pytest
+huggingface-hub
+safetensors
+tqdm
+einops
+lightgbm
+pydantic
+pydantic-settings
+filelock
+typing_extensions

@@ -1,0 +1,16 @@
+{
+  "openml_id": 995,
+  "version": 2,
+  "name": "mfeat-zernike",
+  "target": "binaryClass",
+  "retrieval_timestamp_utc": "2026-08-31T21:14:16.555910+00:00",
+  "y_meta": {
+    "class_labels": [
+      "P",
+      "N"
+    ],
+    "minority_label": "P",
+    "majority_label": "N",
+    "minority_code_original": 0
+  }
+}

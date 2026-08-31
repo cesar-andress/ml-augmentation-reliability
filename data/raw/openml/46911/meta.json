@@ -1,0 +1,16 @@
+{
+  "openml_id": 46911,
+  "version": 1,
+  "name": "Bank_Customer_Churn",
+  "target": "churn",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:30.917997+00:00",
+  "y_meta": {
+    "class_labels": [
+      "No",
+      "Yes"
+    ],
+    "minority_label": "Yes",
+    "majority_label": "No",
+    "minority_code_original": 1
+  }
+}

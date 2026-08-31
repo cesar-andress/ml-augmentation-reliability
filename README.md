@@ -104,4 +104,7 @@ cd ~/papers/ml/ml
 - All 10 folds, HPO, full TabDDPM campaign
 - Mixed-effects analysis
 - Paper writing under `~/papers/ml/paper`
-# ml-augmentation-reliability
+
+## Repository scope
+
+The manuscript and publication materials live outside this repository under `~/papers/ml/paper` and must never be committed. This repository contains only the reproducible research artifact intended for eventual Zenodo archival. Branch policy: `main` only (see `docs/REPOSITORY_POLICY.md`).

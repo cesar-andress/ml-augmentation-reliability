@@ -1,0 +1,149 @@
+resolved_openml_id,source_pools,source_dataset_ids,dataset_name,openml_version,retrieval_timestamp_utc,prefilter_skip,prefilter_reason,description_excerpt,objective_eligible,error,fail_stage,target_name,class_labels,minority_label,majority_label,n_rows,n_source_features,n_numeric,n_categorical,n_continuous,n_integer_valued_numeric,missing_indicator_count,n_encoded_features,n_minority,n_majority,minority_prevalence,missing_fraction,max_balanced_train_size,raw_checksum,objective_checks_json,dtype_disagreement,dtype_disagreement_json,prevalence_upper_bound_used,check_binary,check_rows_in_range,check_has_continuous,check_prevalence_ge_0_02,check_prevalence_le_upper,check_minority_count_ge_250,check_missing_lt_10pct,check_encoded_features_le_100,check_tabpfn_envelope_balanced_train_le_10000
+735,climb,climb:735,cpu_small,3,2026-08-31T21:14:16.222637+00:00,False,,"**Author**:   
+**Source**: Unknown - Date unknown  
+**Please cite**:   
+
+Binarized version of the original data set (see version 1). It converts the numeric target feature to a two-class nominal target feature by computing the mean and classifying all instances with a lower target value as positive ('P') and all others as negative ('N').",True,,,binaryClass,P|N,P,N,8192.0,12.0,12.0,0.0,3.0,9.0,0.0,12.0,2477.0,5715.0,0.3023681640625,0.0,5714.0,7c86df873b6815ef37c5d303616a641c9a674a455d9531f0a36fe4d8d8514ff7,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+833,climb,climb:833,bank32nh,2,2026-08-31T21:14:16.289020+00:00,False,,"**Author**:   
+**Source**: Unknown - Date unknown  
+**Please cite**:   
+
+Binarized version of the original data set (see version 1). It converts the numeric target feature to a two-class nominal target feature by computing the mean and classifying all instances with a lower target value as positive ('P') and all others as negative ('N').",True,,,binaryClass,P|N,N,P,8192.0,32.0,32.0,0.0,28.0,4.0,0.0,32.0,2543.0,5649.0,0.3104248046875,0.0,5650.0,3dfceb468ac8f3942255d56a82a68ed63a6cb50f74d77e070ce067e3eb884213,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+976,climb,climb:976,JapaneseVowels,2,2026-08-31T21:14:16.420822+00:00,False,,"**Author**:   
+**Source**: Unknown - Date unknown  
+**Please cite**:   
+
+Binarized version of the original data set (see version 1). The multi-class target feature is converted to a two-class nominal target feature by re-labeling the majority class as positive ('P') and all others as negative ('N'). Originally converted by Quan Sun.",True,,,binaryClass,P|N,P,N,9961.0,14.0,14.0,0.0,12.0,2.0,0.0,14.0,1614.0,8347.0,0.1620319245055717,0.0,8346.0,dc7353d32beddb7ffbf2ffb59279f2f72e0973388fe46485f954c0bd64783fb7,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+1021,climb,climb:1021,page-blocks,2,2026-08-31T21:14:16.646524+00:00,False,,"**Author**:   
+**Source**: Unknown - Date unknown  
+**Please cite**:   
+
+Binarized version of the original data set (see version 1). The multi-class target feature is converted to a two-class nominal target feature by re-labeling the majority class as positive ('P') and all others as negative ('N'). Originally converted by Quan Sun.",True,,,binaryClass,P|N,N,P,5473.0,10.0,10.0,0.0,4.0,6.0,0.0,10.0,560.0,4913.0,0.1023204823679883,0.0,4912.0,e9aa6d4289bba90de869e348b1467b5acf8c688bc8d7542476a1ddbfb3d2124b,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+1067,climb,climb:1067,kc1,1,2026-08-31T21:14:16.740604+00:00,False,,"**Author**: Mike Chapman, NASA  
+**Source**: [tera-PROMISE](http://openscience.us/repo/defect/mccabehalsted/kc1.html) - 2004  
+**Please cite**: Sayyad Shirabad, J. and Menzies, T.J. (2005) The PROMISE Repository of Software Engineering Databases. School of Information Technology and Engineering, University of Ottawa, Canada.  
+  
+**KC1 Software defect prediction**  
+One of the NASA Metrics Data Program defect data sets. Data from software for storage management for receiving and processing ground data. Data comes from McCabe and Halstead features extractors of source code.  These features were defined in the 70s in an attempt to objectively characterize code features that are associated with software quality.
+
+### Attribute Information  
+
+1. loc             : numeric % McCabe's line count ",True,,,defects,False|True,True,False,2109.0,21.0,21.0,0.0,17.0,4.0,0.0,21.0,326.0,1783.0,0.1545756282598387,0.0,1784.0,6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+1489,climb,climb:1489,phoneme,1,2026-08-31T21:14:16.857825+00:00,False,,"**Author**: Dominique Van Cappel, THOMSON-SINTRA  
+**Source**: [KEEL](http://sci2s.ugr.es/keel/dataset.php?cod=105#sub2), [ELENA](https://www.elen.ucl.ac.be/neural-nets/Research/Projects/ELENA/databases/REAL/phoneme/) - 1993  
+**Please cite**: None  
+
+The aim of this dataset is to distinguish between nasal (class 0) and oral sounds (class 1). Five different attributes were chosen to characterize each vowel: they are the amplitudes of the five first harmonics AHi, normalised by the total energy Ene (integrated on all the frequencies): AHi/Ene. The phonemes are transcribed as follows: sh as in she, dcl as in dark, iy as the vowel in she, aa as the vowel in dark, and ao as the first vowel in water.  
+
+### Source
+
+The current dataset was formatted by the KEEL repository, but originally hosted ",True,,,Class,1|2,2,1,5404.0,5.0,5.0,0.0,5.0,0.0,0.0,5.0,1586.0,3818.0,0.2934863064396743,0.0,3818.0,c6b2d6cce799e15d6629333d542f6ec0a703eade0fa7c0ca22e712520e84fc16,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+40983,climb,climb:40983,wilt,2,2026-08-31T21:14:17.024415+00:00,False,,"**Author**: Brian Johnson     
+**Source**: [UCI] (https://archive.ics.uci.edu/ml/datasets/Wilt)  
+**Please cite**: Johnson, B., Tateishi, R., Hoan, N., 2013. A hybrid pansharpening approach and multiscale object-based image analysis for mapping diseased pine and oak trees. International Journal of Remote Sensing, 34 (20), 6969-6982.   
+
+__Changes w.r.t. version 1: renamed variables such that they match description.__
+
+
+### Dataset:  
+Wilt Data Set 
+
+### Abstract:    
+High-resolution Remote Sensing data set (Quickbird). Small number of training samples of diseased trees, large number for other land cover. Testing data set from stratified random sample of image.
+
+### Source:
+  
+Brian Johnson; 
+Institute for Global Environmental Strategies; 
+2108-11 Kamiyamaguchi, Hayama, Kanagawa,240-0115 Ja",True,,,class,1|2,2,1,4839.0,5.0,5.0,0.0,5.0,0.0,0.0,5.0,261.0,4578.0,0.0539367637941723,0.0,4578.0,caba7c5bbe82e1f0798798eed469aa5ad2721d036d3b86fd0ed0dda0cdfb960e,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+42178,climb,climb:42178,telco-customer-churn,1,2026-08-31T21:14:17.151958+00:00,False,,"Context
+""Predict behavior to retain customers. You can analyze all relevant customer data and develop focused customer retention programs."" [IBM Sample Data Sets]
+
+Content
+Each row represents a customer, each column contains customer's attributes described on the column Metadata.
+
+The data set includes information about:
+
+Customers who left within the last month - the column is called Churn
+Services that each customer has signed up for - phone, multiple lines, internet, online security, online backup, device protection, tech support, and streaming TV and movies
+Customer account information - how long they've been a customer, contract, payment method, paperless billing, monthly charges, and total charges
+Demographic info about customers - gender, age range, and if they have partners and dep",True,,,Churn,No|Yes,Yes,No,7043.0,19.0,3.0,16.0,1.0,2.0,0.0,19.0,1869.0,5174.0,0.2653698707936959,0.0,5174.0,86fb1c0919c05313b3d5ebbd0b1e3e84aab599a93f02afe2db07bf670a559b81,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+46911,tabarena_v0.1,tabarena_v0.1:46911,Bank_Customer_Churn,1,2026-08-31T21:14:17.432926+00:00,False,,"This dataset was curated for [TabArena](https://tabarena.ai/) by the TabArena team
+as part of the [TabArena Tabular ML IID Study](https://tabarena.ai/data-tabular-ml-iid-study).
+For more details on the study, see our [paper](https://tabarena.ai/paper-tabular-ml-iid-study).
+
+**Dataset Focus**: This dataset shall be used for evaluating predictive machine
+learning models for independent and identically distributed tabular data. The
+intended task is classification.
+
+---
+#### Dataset Metadata
+- **Licence:** Public
+- **Original Data Source:** https://www.kaggle.com/datasets/gauravtopre/bank-customer-churn-dataset
+- **Reference (please cite)**: Topre, Gaurav. 'Bank Customer Churn Dataset.' Kaggle, 2022, https://www.kaggle.com/datasets/gauravtopre/bank-customer-churn-dataset.
+- **Dataset Year:** 2",True,,,churn,No|Yes,Yes,No,10000.0,10.0,6.0,4.0,2.0,4.0,0.0,10.0,2037.0,7963.0,0.2037,0.0,7964.0,85d34457ab9a4dc995e993f4349c502818d23ae27e9d140cea45493b011bc568,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+46915,tabarena_v0.1,tabarena_v0.1:46915,churn,4,2026-08-31T21:14:17.885135+00:00,False,,"This dataset was curated for [TabArena](https://tabarena.ai/) by the TabArena team
+as part of the [TabArena Tabular ML IID Study](https://tabarena.ai/data-tabular-ml-iid-study).
+For more details on the study, see our [paper](https://tabarena.ai/paper-tabular-ml-iid-study).
+
+**Dataset Focus**: This dataset shall be used for evaluating predictive machine
+learning models for independent and identically distributed tabular data. The
+intended task is classification.
+
+---
+#### Dataset Metadata
+- **Licence:** MIT License
+- **Original Data Source:** Original source lost. See instead PMLB (https://github.com/EpistasisLab/pmlb/tree/master/datasets/churn) or OpenML dataset ID 40701.
+- **Reference (please cite)**: Marcoulides, George A. 'Discovering Knowledge in Data: an Introduction to Data Mining.' ",True,,,CustomerChurned,No|Yes,Yes,No,5000.0,19.0,15.0,4.0,8.0,7.0,0.0,19.0,707.0,4293.0,0.1414,0.0,4294.0,fd16427b2e4f30f71a63e54440d5a8be2bc134e3e607b4f0dc15a77bea7c51a9,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+46921,tabarena_v0.1,tabarena_v0.1:46921,diabetes,7,2026-08-31T21:14:18.024191+00:00,False,,"This dataset was curated for [TabArena](https://tabarena.ai/) by the TabArena team
+as part of the [TabArena Tabular ML IID Study](https://tabarena.ai/data-tabular-ml-iid-study).
+For more details on the study, see our [paper](https://tabarena.ai/paper-tabular-ml-iid-study).
+
+**Dataset Focus**: This dataset shall be used for evaluating predictive machine
+learning models for independent and identically distributed tabular data. The
+intended task is classification.
+
+---
+#### Dataset Metadata
+- **Licence:** CC0: Public Domain
+- **Original Data Source:** Original UCI source is lost, backup on [OpenML](https://www.openml.org/search?type=data&sort=runs&id=37) and [Kaggle](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database).
+- **Reference (please cite)**: Smith, Jack W., et al. 'U",True,,,TestedPositiveForDiabetes,No|Yes,Yes,No,768.0,8.0,8.0,0.0,2.0,6.0,0.0,8.0,268.0,500.0,0.3489583333333333,0.0,500.0,9ccdd95253e038619ce070a0e9ced24e382b413bb139f90e432dff81adc884dd,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+46927,tabarena_v0.1,tabarena_v0.1:46927,Fitness_Club,1,2026-08-31T21:14:18.044940+00:00,False,,"This dataset was curated for [TabArena](https://tabarena.ai/) by the TabArena team
+as part of the [TabArena Tabular ML IID Study](https://tabarena.ai/data-tabular-ml-iid-study).
+For more details on the study, see our [paper](https://tabarena.ai/paper-tabular-ml-iid-study).
+
+**Dataset Focus**: This dataset shall be used for evaluating predictive machine
+learning models for independent and identically distributed tabular data. The
+intended task is classification.
+
+---
+#### Dataset Metadata
+- **Licence:** Public Domain
+- **Original Data Source:** https://www.kaggle.com/datasets/ddosad/datacamps-data-science-associate-certification
+- **Reference (please cite)**: Kaggle User Ddosad. 'Fitness Club Dataset for ML Classification.' Kaggle, 2023, https://www.kaggle.com/datasets/ddosad/datacamps-data",True,,,attended,No|Yes,Yes,No,1500.0,6.0,3.0,3.0,1.0,2.0,1.0,7.0,454.0,1046.0,0.3026666666666666,0.0022222222222222,1046.0,23d6a9f9a02f0aea50f700b704c2aca324ee96608b2f19dee4decbed28233875,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+46930,tabarena_v0.1,tabarena_v0.1:46930,hazelnut-spread-contaminant-detection,1,2026-08-31T21:14:18.069045+00:00,False,,"This dataset was curated for [TabArena](https://tabarena.ai/) by the TabArena team
+as part of the [TabArena Tabular ML IID Study](https://tabarena.ai/data-tabular-ml-iid-study).
+For more details on the study, see our [paper](https://tabarena.ai/paper-tabular-ml-iid-study).
+
+**Dataset Focus**: This dataset shall be used for evaluating predictive machine
+learning models for independent and identically distributed tabular data. The
+intended task is classification.
+
+---
+#### Dataset Metadata
+- **Licence:** CC BY-SA
+- **Original Data Source:** https://www.openml.org/search?type=data&status=active&id=45538
+- **Reference (please cite)**: Ricci, Marco, et al. 'Machine-learning-based microwave sensing: A case study for the food industry.' IEEE Journal on Emerging and Selected Topics in Circuits and",True,,,Contaminated,0|1,0,1,2400.0,30.0,30.0,0.0,30.0,0.0,0.0,30.0,1200.0,1200.0,0.5,0.0,1200.0,1b92fbff6479c611f6839eb192fecb697aef3ec274234347a6d327c0c93df2ac,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True
+46952,tabarena_v0.1,tabarena_v0.1:46952,qsar-biodeg,2,2026-08-31T21:14:18.234746+00:00,False,,"This dataset was curated for [TabArena](https://tabarena.ai/) by the TabArena team
+as part of the [TabArena Tabular ML IID Study](https://tabarena.ai/data-tabular-ml-iid-study).
+For more details on the study, see our [paper](https://tabarena.ai/paper-tabular-ml-iid-study).
+
+**Dataset Focus**: This dataset shall be used for evaluating predictive machine
+learning models for independent and identically distributed tabular data. The
+intended task is classification.
+
+---
+#### Dataset Metadata
+- **Licence:** CC BY 4.0
+- **Original Data Source:** https://doi.org/10.24432/C5H60M
+- **Reference (please cite)**: Mansouri, Kamel, et al. 'Quantitative structureactivity relationship models for ready biodegradability of chemicals.' Journal of chemical information and modeling 53.4 (2013): 867-878. https:",True,,,Biodegradable,No|Yes,Yes,No,1054.0,41.0,36.0,5.0,17.0,19.0,0.0,41.0,355.0,699.0,0.3368121442125237,0.0,700.0,8788778e74c1ffa3f4b7dc7553e0e55abd964463457187df98aedf2b24fb234f,"{""binary"": true, ""rows_in_range"": true, ""has_continuous"": true, ""prevalence_ge_0_02"": true, ""prevalence_le_upper"": true, ""minority_count_ge_250"": true, ""missing_lt_10pct"": true, ""encoded_features_le_100"": true, ""tabpfn_envelope_balanced_train_le_10000"": true}",False,[],0.5,True,True,True,True,True,True,True,True,True

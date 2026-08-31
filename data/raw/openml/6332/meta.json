@@ -1,0 +1,16 @@
+{
+  "openml_id": 6332,
+  "version": 2,
+  "name": "cylinder-bands",
+  "target": "band_type",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:13.918762+00:00",
+  "y_meta": {
+    "class_labels": [
+      "band",
+      "noband"
+    ],
+    "minority_label": "band",
+    "majority_label": "noband",
+    "minority_code_original": 0
+  }
+}

@@ -1,0 +1,36 @@
+freeze_name: protocol_v1_1
+issued_utc: "2026-08-31T20:00:00Z"
+status: SUPERSEDED_BY_V1_2
+notes: >
+  Immutable historical record of the original confirmatory design.
+  Superseded outcome-blind by Protocol v1.2 before any confirmatory model was fitted.
+
+minimum_cohort_size_D: 15
+candidate_universe:
+  - tabarena_v0.1
+  - climb
+prevalence:
+  min: 0.02
+  max: 0.40
+  authorized_amendment_attempted:
+    from: 0.40
+    to: 0.50
+    outcome: DATASET_COHORT_NO_GO
+    qualifying_before: 13
+    qualifying_after: 14
+eligibility_summary:
+  binary: true
+  n_rows: [500, 10000]
+  n_continuous_ge: 1
+  n_minority_ge: 250
+  missing_fraction_lt: 0.10
+  n_encoded_features_le: 100
+  tabpfn_max_balanced_train_le: 10000
+human_decisions_recorded:
+  - openml_id: 44232
+    decision: EXCLUDE
+    retained_counterpart: 46915
+known_defects_discovered_later:
+  - artificial_binarization_ids: [735, 833, 976, 1021]
+  - structural_zero_treatment_id: 46930
+confirmatory_models_fitted_at_issuance: false

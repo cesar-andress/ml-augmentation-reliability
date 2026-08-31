@@ -1,0 +1,72 @@
+freeze_name: protocol_v1_2
+issued_utc: "2026-08-31T21:37:00Z"
+status: ACTIVE
+outcome_blind: true
+confirmatory_models_fitted_at_issuance: false
+supersedes: protocol_v1_1
+
+minimum_cohort_size_D: 10
+minimum_D_derivation: |
+  Exact two-sided sign-flip: min p = 2/2^D.
+  D=6 -> 0.03125 > 0.025 (cannot reject even in extreme pattern).
+  D=7 -> 0.015625 < 0.025 (mathematical floor).
+  Protocol chooses D>=10 for margin above that floor.
+  Not a formal power calculation.
+
+candidate_universe:
+  - tabarena_v0.1
+  - climb
+  - openml_cc18
+expansion_policy: exactly_once_to_openml_cc18_no_further_source
+
+prevalence:
+  min: 0.02
+  max: 0.40
+  v1_1_amendment_0_50: retained_in_history_only_not_active
+
+treatment_intensity:
+  formula: r = (1 - 2p) / p
+  require_r_ge: 0.5
+  equivalent_to_p_le: 0.40
+
+artificial_binarization_exclusion:
+  description_regex_case_insensitive: "binarized version of the original data set"
+  target_attribute_exact: binaryClass
+  apply_to: [tabarena_v0.1, climb, openml_cc18]
+
+structural_zero_treatment_exclusion:
+  example_openml_id: 46930
+  reason: "Structural zero treatment: minority prevalence=0.5 implies k=N_majority-N_minority=0."
+  inferential_cohort: exclude
+  pipeline_determinism_manifest: artifacts/manifests/pipeline_determinism_dataset.csv
+
+tabarena_precedence: prefer_curated_tabarena_reupload_when_same_underlying_dataset
+
+human_decisions_carried_forward:
+  - openml_id: 44232
+    decision: EXCLUDE
+    reason: probable_subset_variant_of_46915
+  - openml_id: 1489
+    decision: KEEP
+    reason: elena_phoneme_no_usable_speaker_id_conventionally_iid_tabular
+
+eligibility:
+  binary: true
+  n_rows: [500, 10000]
+  n_continuous_ge: 1
+  minority_prevalence_min: 0.02
+  minority_prevalence_max: 0.40
+  treatment_intensity_r_ge: 0.5
+  n_minority_ge: 250
+  missing_fraction_lt: 0.10
+  n_encoded_features_le: 100
+  tabpfn_max_balanced_train_le: 10000
+  exclude_synthetic_simulated: true
+  exclude_fictional: true
+  exclude_non_iid: true
+  exclude_time_series: true
+  exclude_grouped_repeated: true
+  require_sufficient_provenance: true
+
+no_further_candidate_source: true
+no_filter_relaxation_if_D_lt_10: true

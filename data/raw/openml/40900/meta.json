@@ -1,0 +1,16 @@
+{
+  "openml_id": 40900,
+  "version": 1,
+  "name": "Satellite",
+  "target": "Target",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:20.959160+00:00",
+  "y_meta": {
+    "class_labels": [
+      "Normal",
+      "Anomaly"
+    ],
+    "minority_label": "Anomaly",
+    "majority_label": "Normal",
+    "minority_code_original": 1
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "openml_id": 46918,
+  "version": 5,
+  "name": "credit-g",
+  "target": "good_or_bad_customer",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:31.485549+00:00",
+  "y_meta": {
+    "class_labels": [
+      "bad",
+      "good"
+    ],
+    "minority_label": "bad",
+    "majority_label": "good",
+    "minority_code_original": 0
+  }
+}

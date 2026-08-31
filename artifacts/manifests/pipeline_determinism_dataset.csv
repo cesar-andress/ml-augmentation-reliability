@@ -1,0 +1,3 @@
+resolved_openml_id,dataset_name,openml_version,n_rows,n_minority,n_majority,minority_prevalence,first_exclusion_reason,raw_checksum,exclusion_reason,inferential_cohort,determinism_assertion_deferred
+1485,madelon,1,2600.0,1300.0,1300.0,0.5,Structural zero treatment: minority prevalence=0.5 implies k=N_majority-N_minority=0.,,Structural zero treatment: minority prevalence=0.5 implies k=N_majority-N_minority=0.,False,True
+46930,hazelnut-spread-contaminant-detection,1,2400.0,1200.0,1200.0,0.5,Structural zero treatment: minority prevalence=0.5 implies k=N_majority-N_minority=0.,,Structural zero treatment: minority prevalence=0.5 implies k=N_majority-N_minority=0.,False,True

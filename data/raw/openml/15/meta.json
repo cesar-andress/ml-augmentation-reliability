@@ -1,0 +1,16 @@
+{
+  "openml_id": 15,
+  "version": 1,
+  "name": "breast-w",
+  "target": "Class",
+  "retrieval_timestamp_utc": "2026-08-31T21:40:39.067297+00:00",
+  "y_meta": {
+    "class_labels": [
+      "benign",
+      "malignant"
+    ],
+    "minority_label": "malignant",
+    "majority_label": "benign",
+    "minority_code_original": 1
+  }
+}

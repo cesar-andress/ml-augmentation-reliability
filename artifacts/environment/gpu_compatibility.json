@@ -1,0 +1,107 @@
+{
+  "results": [
+    {
+      "name": "A_torch_cuda",
+      "status": "PASS",
+      "wall_clock_seconds": 0.04786106292158365,
+      "peak_vram_mb": 16.12646484375,
+      "exception": null,
+      "detail": {
+        "result_mean": 0.9324501156806946,
+        "cuda": true
+      }
+    },
+    {
+      "name": "B_xgboost_cuda",
+      "status": "PASS",
+      "wall_clock_seconds": 0.6221640598960221,
+      "peak_vram_mb": 8.125,
+      "exception": null,
+      "detail": {
+        "proba_head": [
+          0.9688534140586853,
+          0.029499884694814682,
+          0.029499884694814682,
+          0.9688534140586853,
+          0.029499884694814682
+        ]
+      }
+    },
+    {
+      "name": "C_tabpfn_v2",
+      "status": "PASS",
+      "wall_clock_seconds": 0.4148804941214621,
+      "peak_vram_mb": 41.00048828125,
+      "exception": null,
+      "detail": {
+        "ckpt": "/home/cesar/papers/ml/ml/checkpoints/tabpfn/tabpfn-v2-classifier.ckpt",
+        "proba_head": [
+          0.9492464065551758,
+          0.999455451965332,
+          0.0014062789268791676,
+          0.995378315448761,
+          0.9990847110748291,
+          0.0009426292963325977,
+          0.0016421377658843994,
+          0.9993515610694885
+        ]
+      }
+    },
+    {
+      "name": "D_tabicl_v1",
+      "status": "PASS",
+      "wall_clock_seconds": 0.2977306980174035,
+      "peak_vram_mb": 129.86181640625,
+      "exception": null,
+      "detail": {
+        "ckpt": "/home/cesar/papers/ml/ml/checkpoints/tabicl/tabicl-classifier-v1-20250208.ckpt",
+        "proba_head": [
+          0.9944551587104797,
+          0.9991655349731445,
+          0.001420490792952478,
+          0.9984511137008667,
+          0.99898362159729,
+          0.0015047824708744884,
+          0.0017036686185747385,
+          0.9990111589431763
+        ]
+      }
+    },
+    {
+      "name": "E_synthcity_tabddpm",
+      "status": "PASS",
+      "wall_clock_seconds": 4.967641800874844,
+      "peak_vram_mb": 8.125,
+      "exception": null,
+      "detail": {
+        "job_dir": "/home/cesar/papers/ml/ml/artifacts/smoke/gpu_a3_ewy5mi_l",
+        "status": {
+          "status": "ok",
+          "fit_seconds": 0.8087163171730936,
+          "sample_seconds": 0.037025511963292956,
+          "n_requested": 5,
+          "n_generated": 5,
+          "plugin": "ddpm",
+          "plugin_class": "TabDDPMPlugin",
+          "plugin_kwargs": {
+            "n_iter": 2,
+            "batch_size": 32,
+            "num_timesteps": 10,
+            "random_state": 0,
+            "is_classification": false
+          },
+          "random_state": 0,
+          "mark": "SMOKE_ONLY_NOT_SCIENTIFIC"
+        }
+      }
+    }
+  ],
+  "summary": {
+    "A_torch_cuda": "PASS",
+    "B_xgboost_cuda": "PASS",
+    "C_tabpfn_v2": "PASS",
+    "D_tabicl_v1": "PASS",
+    "E_synthcity_tabddpm": "PASS"
+  },
+  "all_pass": true
+}

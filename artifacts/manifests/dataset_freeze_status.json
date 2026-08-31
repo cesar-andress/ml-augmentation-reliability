@@ -1,0 +1,29 @@
+{
+  "timestamp_utc": "2026-08-31T21:14:51.098322+00:00",
+  "outcome": "DATASET_COHORT_NO_GO",
+  "human_exclude": [
+    44232
+  ],
+  "n_objective_eligible_after_amendment": 15,
+  "n_qualifying_before_amendment": 13,
+  "n_qualifying_after_amendment": 14,
+  "amendment_used": true,
+  "frozen": false,
+  "provisional_keep_ids": [
+    735,
+    833,
+    976,
+    1021,
+    1067,
+    1489,
+    40983,
+    42178,
+    46911,
+    46915,
+    46921,
+    46927,
+    46930,
+    46952
+  ],
+  "note": "No datasets_frozen_v1.csv produced. No confirmatory_freeze_v1.yaml produced."
+}

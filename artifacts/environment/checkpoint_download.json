@@ -1,0 +1,12 @@
+{
+  "tabpfn": {
+    "status": "ok",
+    "path": "/home/cesar/papers/ml/ml/checkpoints/tabpfn/tabpfn-v2-classifier.ckpt",
+    "sha256": "f65a35685aeef42e31b796d9bfa34e68d6fc780bc98e7bff7763802964cf435f"
+  },
+  "tabicl": {
+    "status": "ok",
+    "path": "/home/cesar/papers/ml/ml/checkpoints/tabicl/tabicl-classifier-v1-20250208.ckpt",
+    "sha256": "04c5c1d261c1f782dc9b263990dcfa5152b1949ed8451ad16c010cdafbea07e0"
+  }
+}

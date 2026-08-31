@@ -1,0 +1,16 @@
+{
+  "openml_id": 1494,
+  "version": 1,
+  "name": "qsar-biodeg",
+  "target": "Class",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:06.651318+00:00",
+  "y_meta": {
+    "class_labels": [
+      "1",
+      "2"
+    ],
+    "minority_label": "2",
+    "majority_label": "1",
+    "minority_code_original": 1
+  }
+}

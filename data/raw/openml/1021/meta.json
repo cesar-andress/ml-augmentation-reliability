@@ -1,0 +1,16 @@
+{
+  "openml_id": 1021,
+  "version": 2,
+  "name": "page-blocks",
+  "target": "binaryClass",
+  "retrieval_timestamp_utc": "2026-08-31T21:14:16.646524+00:00",
+  "y_meta": {
+    "class_labels": [
+      "P",
+      "N"
+    ],
+    "minority_label": "N",
+    "majority_label": "P",
+    "minority_code_original": 1
+  }
+}

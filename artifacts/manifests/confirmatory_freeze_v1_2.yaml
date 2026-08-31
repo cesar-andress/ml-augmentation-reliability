@@ -1,0 +1,39 @@
+freeze_name: confirmatory_freeze_v1_2
+timestamp_utc: '2026-08-31T21:42:54.043721+00:00'
+protocol: v1.2
+git_commit_at_freeze_script: 72c973d73aac94b78877526def8652d6e841ecd7
+dataset_cohort_csv: artifacts/manifests/datasets_frozen_v1_2.csv
+dataset_cohort_sha256: 209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34
+D: 10
+dataset_ids:
+- resolved_openml_id: 44
+  openml_version: 1
+  dataset_name: spambase
+- resolved_openml_id: 1067
+  openml_version: 1
+  dataset_name: kc1
+- resolved_openml_id: 1489
+  openml_version: 1
+  dataset_name: phoneme
+- resolved_openml_id: 40983
+  openml_version: 2
+  dataset_name: wilt
+- resolved_openml_id: 42178
+  openml_version: 1
+  dataset_name: telco-customer-churn
+- resolved_openml_id: 46911
+  openml_version: 1
+  dataset_name: Bank_Customer_Churn
+- resolved_openml_id: 46915
+  openml_version: 4
+  dataset_name: churn
+- resolved_openml_id: 46921
+  openml_version: 7
+  dataset_name: diabetes
+- resolved_openml_id: 46927
+  openml_version: 1
+  dataset_name: Fitness_Club
+- resolved_openml_id: 46952
+  openml_version: 2
+  dataset_name: qsar-biodeg
+push_required_before_confirmatory_run: true

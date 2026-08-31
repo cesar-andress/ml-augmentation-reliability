@@ -1,0 +1,16 @@
+{
+  "openml_id": 1063,
+  "version": 1,
+  "name": "kc2",
+  "target": "problems",
+  "retrieval_timestamp_utc": "2026-08-31T21:40:57.957969+00:00",
+  "y_meta": {
+    "class_labels": [
+      "no",
+      "yes"
+    ],
+    "minority_label": "yes",
+    "majority_label": "no",
+    "minority_code_original": 1
+  }
+}

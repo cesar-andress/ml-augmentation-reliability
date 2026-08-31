@@ -1,0 +1,13 @@
+{
+  "timestamp_utc": "2026-08-31T21:14:51.090326+00:00",
+  "decisions": [
+    {
+      "resolved_openml_id": 44232,
+      "dataset_name": "UCI_churn",
+      "semantic_decision": "EXCLUDE",
+      "decision_reason": "Probable subset/variant of the 5,000-row classic telecom churn dataset; excluded conservatively to preserve dataset-level independence.",
+      "retained_counterpart_openml_id": 46915,
+      "retained_counterpart_name": "churn"
+    }
+  ]
+}

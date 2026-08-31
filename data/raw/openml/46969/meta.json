@@ -1,0 +1,16 @@
+{
+  "openml_id": 46969,
+  "version": 3,
+  "name": "NATICUSdroid",
+  "target": "Malware",
+  "retrieval_timestamp_utc": "2026-08-31T21:41:31.840882+00:00",
+  "y_meta": {
+    "class_labels": [
+      "No",
+      "Yes"
+    ],
+    "minority_label": "Yes",
+    "majority_label": "No",
+    "minority_code_original": 1
+  }
+}

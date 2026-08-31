@@ -1,0 +1,16 @@
+{
+  "openml_id": 37,
+  "version": 1,
+  "name": "diabetes",
+  "target": "class",
+  "retrieval_timestamp_utc": "2026-08-31T21:40:44.514178+00:00",
+  "y_meta": {
+    "class_labels": [
+      "tested_negative",
+      "tested_positive"
+    ],
+    "minority_label": "tested_positive",
+    "majority_label": "tested_negative",
+    "minority_code_original": 1
+  }
+}

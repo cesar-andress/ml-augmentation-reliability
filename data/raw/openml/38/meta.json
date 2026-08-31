@@ -1,0 +1,16 @@
+{
+  "openml_id": 38,
+  "version": 1,
+  "name": "sick",
+  "target": "Class",
+  "retrieval_timestamp_utc": "2026-08-31T21:40:44.859858+00:00",
+  "y_meta": {
+    "class_labels": [
+      "negative",
+      "sick"
+    ],
+    "minority_label": "sick",
+    "majority_label": "negative",
+    "minority_code_original": 1
+  }
+}

@@ -1,0 +1,23 @@
+# Isolated SynthCity / TabDDPM environment
+# Forced isolation because synthcity==0.2.12 requires:
+#   torch>=2.1,<2.3
+#   numpy<2.0
+#   xgboost<3.0.0
+# which conflict with tabpfn (torch>=2.5) and xgboost==3.4.1
+synthcity==0.2.12
+numpy<2.0,>=1.20
+pandas>=2.1
+scikit-learn>=1.2
+scipy
+pyarrow
+pyyaml
+joblib
+psutil
+tqdm
+cloudpickle
+pydantic>=2.0
+loguru
+# torch and xgboost installed separately with compatible pins
+xgboost>=1.7,<3.0
+# opacus>=1.5 requires torch.nn.RMSNorm (torch>=2.4); synthcity pins torch<2.3
+opacus==1.4.0

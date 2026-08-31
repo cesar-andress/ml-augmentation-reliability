@@ -1,0 +1,13 @@
+{
+  "env": ".venv_synthcity",
+  "python": "3.11.15",
+  "executable": "/home/cesar/papers/ml/ml/.venv_synthcity/bin/python",
+  "packages": {
+    "synthcity": "0.2.12",
+    "torch": "2.2.2+cu121",
+    "numpy": "1.26.4",
+    "xgboost": "2.1.4",
+    "scikit-learn": "1.9.0",
+    "pandas": "2.3.3"
+  }
+}

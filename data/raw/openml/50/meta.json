@@ -1,0 +1,16 @@
+{
+  "openml_id": 50,
+  "version": 1,
+  "name": "tic-tac-toe",
+  "target": "Class",
+  "retrieval_timestamp_utc": "2026-08-31T21:40:48.479817+00:00",
+  "y_meta": {
+    "class_labels": [
+      "negative",
+      "positive"
+    ],
+    "minority_label": "negative",
+    "majority_label": "positive",
+    "minority_code_original": 0
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "timestamp_utc": "2026-08-31T20:58:37.128481+00:00",
+  "hostname": "cesar-System-Product-Name",
+  "os": {
+    "uname": {
+      "system": "Linux",
+      "node": "cesar-System-Product-Name",
+      "release": "6.8.0-136-generic",
+      "version": "#136~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul  3 16:29:11 UTC ",
+      "machine": "x86_64",
+      "processor": "x86_64"
+    },
+    "pretty_name": "Ubuntu 22.04.5 LTS"
+  },
+  "cpu": {
+    "model": "Intel(R) Core(TM) i7-14700K",
+    "logical_cpus": 28
+  },
+  "ram": {
+    "total_bytes": 134796374016,
+    "total_gib": 125.54
+  },
+  "gpu": {
+    "model": "NVIDIA GeForce RTX 4090",
+    "vram": "24564 MiB",
+    "driver": "595.84",
+    "cuda_runtime_reported_by_nvidia_smi": "13.2"
+  },
+  "python_available": {
+    "python3.10": {
+      "path": "/usr/bin/python3.10",
+      "version": "Python 3.10.12"
+    },
+    "python3.11": {
+      "path": "/usr/bin/python3.11",
+      "version": "Python 3.11.15"
+    },
+    "python3.12": {
+      "path": "/usr/bin/python3.12",
+      "version": "Python 3.12.13"
+    },
+    "python3": {
+      "path": "/usr/local/bin/python3",
+      "version": "Python 3.6.15"
+    }
+  },
+  "disk": {
+    "filesystem": "/dev/nvme0n1p2",
+    "size_bytes": 2014574526464,
+    "used_bytes": 1485952933888,
+    "available_bytes": 426211319808,
+    "available_gib": 396.94,
+    "use_percent": "78%",
+    "mount": "/"
+  }
+}

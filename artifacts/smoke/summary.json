@@ -1,0 +1,7 @@
+{
+  "n_rows": 13,
+  "n_ok": 13,
+  "n_fail": 0,
+  "failures": [],
+  "output": "/home/cesar/papers/ml/ml/results/raw/smoke_results.parquet"
+}
