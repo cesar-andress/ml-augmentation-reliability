@@ -45,6 +45,13 @@ def main(job_dir: Path) -> int:
 
         if scientific:
             # Frozen Protocol v1.2.1 A3 protocol-mode constructor settings
+            import torch
+
+            device_cfg = cfg.get("device", "cuda")
+            if isinstance(device_cfg, str):
+                device = torch.device(device_cfg)
+            else:
+                device = device_cfg
             plugin_kwargs = {
                 "is_classification": True,
                 "n_iter": int(cfg.get("n_iter", 1000)),
@@ -63,7 +70,7 @@ def main(job_dir: Path) -> int:
                 "compress_dataset": bool(cfg.get("compress_dataset", False)),
                 "sampling_patience": int(cfg.get("sampling_patience", 500)),
                 "random_state": random_state,
-                "device": str(cfg.get("device", "cuda")),
+                "device": device,
             }
             target_col = "__target__"
             df = X.copy()
