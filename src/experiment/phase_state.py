@@ -131,18 +131,28 @@ class PhaseStateManager:
         rec = self.get_phase(phase)
         status = rec.get("status", "PLANNED")
         if status == "COMPLETE":
-            if output_checksum and self.can_reuse_phase(
-                phase, input_hashes=input_hashes, output_checksum=output_checksum
-            ):
+            if not resume:
+                # Fresh run colliding with prior COMPLETE requires explicit checksum match
+                if output_checksum is None:
+                    raise PhaseConflictError(
+                        f"phase {phase} already COMPLETE; use --resume or clear unit status"
+                    )
+                if self.can_reuse_phase(phase, input_hashes=input_hashes, output_checksum=output_checksum):
+                    return False
+                self.assert_no_complete_conflict(
+                    phase, input_hashes=input_hashes, output_checksum=output_checksum
+                )
                 return False
-            self.assert_no_complete_conflict(
-                phase, input_hashes=input_hashes, output_checksum=output_checksum or ""
-            )
+            # --resume: reuse COMPLETE unless an explicit checksum proves conflict
+            if output_checksum is not None:
+                if self.can_reuse_phase(phase, input_hashes=input_hashes, output_checksum=output_checksum):
+                    return False
+                self.assert_no_complete_conflict(
+                    phase, input_hashes=input_hashes, output_checksum=output_checksum
+                )
             return False
         if status == "FAILED":
             return force_rerun_failed
-        if resume and status == "COMPLETE":
-            return False
         return True
 
 
