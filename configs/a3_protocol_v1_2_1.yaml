@@ -1,0 +1,86 @@
+# Frozen A3 TabDDPM protocol-mode specification — Protocol v1.2.1
+# Scientific identity: TabDDPM (Kotelnikov et al.) as implemented in SynthCity 0.2.12.
+
+protocol_version: "1.2.1"
+freeze_name: a3_protocol_v1_2_1
+
+scientific_mode: true
+smoke_settings_allowed: false
+
+synthcity:
+  package: synthcity
+  version: "0.2.12"
+  plugin_name: ddpm
+  plugin_class: TabDDPMPlugin
+  module: synthcity.plugins.generic.plugin_ddpm
+
+constructor:
+  is_classification: true
+  n_iter: 1000
+  lr: 0.002
+  weight_decay: 0.0001
+  batch_size: 1024
+  num_timesteps: 1000
+  gaussian_loss_type: mse
+  scheduler: cosine
+  model_type: mlp
+  model_params: {}
+  dim_embed: 128
+  continuous_encoder: quantile
+  cont_encoder_params: {}
+  validation_size: 0
+  compress_dataset: false
+  sampling_patience: 500
+  random_state: outer_fold_seed
+  device: cuda
+  logging:
+    retain_package_defaults: true
+    note: log_interval and callbacks use package defaults unless they affect results
+
+target_conditioning:
+  fit_data: real_outer_TRAIN_only
+  generate_rows: k
+  k_rule: N_majority_minus_N_minority
+  label_condition: minority_label_only
+  forbid_majority_generation: true
+
+repair:
+  rule_reference: src.augmentation.arms.shared_repair
+
+reuse:
+  outer_unit_scope: one_generator_per_dataset_repeat_fold
+  shared_across_learners: [xgboost, catboost, tabpfn, tabicl]
+  hpo:
+    inner_fold_fit: true
+    outer_fold_artifact_forbidden_in_hpo: true
+    per_candidate_retrain_forbidden: true
+    cache_per_inner_fold: true
+    cache_shared_across_learners_gbdt: true
+
+seeds:
+  outer: outer_fold_seed
+  inner: |
+    int(SHA256(f"{dataset_id}|{repeat}|{fold}|{inner_fold}|A3").hexdigest(), 16) % 2**31
+
+recording:
+  required:
+    - synthcity_version
+    - constructor_arguments
+    - seed
+    - input_checksum
+    - output_checksum
+    - k_requested
+    - k_returned
+    - generator_fit_seconds
+    - generator_sample_seconds
+    - repair_row_fraction
+    - repair_cell_fraction
+
+smoke_prohibition:
+  reject_if:
+    - scientific_mode != true
+    - smoke_settings_allowed == true
+    - n_iter != 1000
+    - num_timesteps != 1000
+    - batch_size != 1024
+    - mark_contains: SMOKE_ONLY

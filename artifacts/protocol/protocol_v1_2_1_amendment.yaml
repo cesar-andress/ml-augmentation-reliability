@@ -1,0 +1,46 @@
+freeze_name: protocol_v1_2_1
+issued_utc: "2026-09-01T05:28:00Z"
+status: ACTIVE
+outcome_blind: true
+supersedes: protocol_v1_2
+supersedes_tag: protocol-v1.2-freeze
+confirmatory_models_fitted_at_issuance: false
+
+amendment_scope: >
+  Outcome-blind Protocol v1.2.1 completes two machine-readable specifications
+  that were required by v1.2 but absent from the frozen artifacts at
+  protocol-v1.2-freeze. No other protocol component is changed.
+
+changes_from_v1_2:
+  - id: hpo_search_spaces
+    description: Exact XGBoost and CatBoost random-search spaces and sampling semantics
+    artifact: configs/hpo_v1_2_1.yaml
+  - id: a3_protocol_mode
+    description: Exact SynthCity 0.2.12 TabDDPM protocol-mode constructor settings
+    artifact: configs/a3_protocol_v1_2_1.yaml
+
+inherited_unchanged_from_v1_2:
+  - dataset_cohort
+  - endpoints
+  - statistical_analysis
+  - augmentation_arms
+  - learner_identities
+  - splits
+  - preprocessing
+  - calibration
+  - conformal
+  - metrics
+  - cohort_sha256: 209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34
+
+blocked_execution_context: >
+  The first confirmatory unit (dataset 44, repeat 0, fold 0) was requested on
+  2026-09-01 but STOPPED before any model execution because HPO search spaces
+  and A3 protocol-mode hyperparameters were not machine-readable/frozen.
+  No confirmatory prediction, metric, loss, HPO score, or generator output
+  had been produced.
+
+preserved_v1_2_artifacts:
+  - artifacts/protocol/protocol_v1_2.yaml
+  - artifacts/protocol/statistical_analysis_v1_2.yaml
+  - artifacts/manifests/confirmatory_freeze_v1_2.yaml
+  - tag: protocol-v1.2-freeze

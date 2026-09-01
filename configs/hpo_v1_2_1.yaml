@@ -1,0 +1,150 @@
+# Frozen HPO specification — Protocol v1.2.1 (outcome-blind amendment)
+# No scientific decision may remain in Python source defaults.
+
+protocol_version: "1.2.1"
+freeze_name: hpo_v1_2_1
+
+sampling:
+  algorithm: deterministic_sequential_random_search
+  rng: numpy.random.Generator
+  bit_generator: PCG64
+  seed_derivation:
+    formula: |
+      hpo_seed = int(SHA256(f"{dataset_id}|{repeat}|{fold}|{learner}|hpo-v1.2.1").hexdigest(), 16) % 2**32
+    shared_across_arms: true
+    note: >
+      For a given (dataset_id, repeat, fold, learner) ONE infinite candidate
+      sequence is generated. Arms A0, A1, A2, A3 share the identical first
+      20 configurations; only training data differs.
+
+  continuous_uniform:
+    method: rng.uniform(low, high)
+
+  log_uniform:
+    method: exp(rng.uniform(log(low), log(high)))
+
+  integer_discrete_uniform:
+    method: rng.choice(explicit_set)
+
+standard_budget:
+  n_candidates: 20
+  inner_cv:
+    type: stratified
+    n_folds: 3
+    scope: outer_TRAIN_only
+  selection_metric: mean_inner_validation_log_loss
+  tie_breaking:
+    - lowest_mean_inner_validation_log_loss
+    - lowest_std_inner_validation_log_loss
+    - lowest_candidate_sequence_index
+  forbidden_partitions_for_selection:
+    - CAL-A
+    - CAL-B
+    - TEST
+  augmentation_rule: >
+    Augmentation must occur independently inside each inner training fold.
+    Never augment the entire outer TRAIN before inner CV and then split it.
+
+a0_plus:
+  uses_same_candidate_sequence: true
+  prefix_configs: 20
+  continuation: indices_20_through_(20_plus_k_extra_minus_1)
+  restart_sampling_forbidden: true
+  k_extra:
+    formula: min(200, ceil(g_max / t_bar))
+    g_max: max(wall_clock_A2_generator, wall_clock_A3_generator)
+    generator_cost_includes:
+      - fit
+      - sampling
+    generator_cost_excludes:
+      - downstream_learner_fit
+    t_bar: mean_wall_clock_first_20_A0_hpo_candidate_evaluations
+    t_bar_scope: same_dataset_repeat_fold_learner
+    cap: 200
+
+learners:
+  xgboost:
+    fixed:
+      n_estimators: 500
+      tree_method: hist
+      device: cuda
+      enable_categorical: false
+      base_score: 0.5
+      max_bin: 256
+      multi_strategy: one_output_per_tree
+      n_jobs: 8
+      random_state: outer_fold_seed
+    search:
+      max_depth:
+        type: integer_discrete_uniform
+        values: [3, 4, 5, 6, 7, 8, 9, 10]
+      learning_rate:
+        type: log_uniform
+        low: 0.01
+        high: 0.30
+      subsample:
+        type: continuous_uniform
+        low: 0.60
+        high: 1.00
+      colsample_bytree:
+        type: continuous_uniform
+        low: 0.60
+        high: 1.00
+      min_child_weight:
+        type: log_uniform
+        low: 1.0
+        high: 20.0
+      reg_lambda:
+        type: log_uniform
+        low: 0.1
+        high: 10.0
+
+  catboost:
+    fixed:
+      iterations: 500
+      learning_rate: 0.05
+      task_type: CPU
+      border_count: 254
+      boosting_type: Plain
+      bootstrap_type: Bernoulli
+      one_hot_max_size: 2
+      thread_count: 8
+      random_seed: outer_fold_seed
+      native_categorical_feature_declaration: true
+    search:
+      depth:
+        type: integer_discrete_uniform
+        values: [4, 5, 6, 7, 8, 9, 10]
+      l2_leaf_reg:
+        type: log_uniform
+        low: 1.0
+        high: 30.0
+      subsample:
+        type: continuous_uniform
+        low: 0.60
+        high: 1.00
+      rsm:
+        type: continuous_uniform
+        low: 0.60
+        high: 1.00
+      random_strength:
+        type: log_uniform
+        low: 0.1
+        high: 10.0
+
+inner_augmentation_cache:
+  policy: >
+    For each inner fold, fit augmentation once per arm (A1/A2/A3) and cache
+    the augmented inner-training data. Reuse the same cached inner folds
+    across all HPO candidate configurations for the same learner. Because
+    augmented data is learner-independent, the same cached inner A1/A2/A3
+    folds may be reused between XGBoost and CatBoost for that outer unit.
+  outer_a3_forbidden_in_hpo: true
+  per_candidate_a3_retrain_forbidden: true
+
+generator_seeds:
+  outer_a3: outer_fold_seed
+  inner_pattern: |
+    int(SHA256(f"{dataset_id}|{repeat}|{fold}|{inner_fold}|{arm}").hexdigest(), 16) % 2**31
+  arms: [A1, A2, A3]
+  learner_independent: true

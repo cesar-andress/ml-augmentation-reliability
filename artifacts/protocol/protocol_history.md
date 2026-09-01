@@ -46,3 +46,18 @@ Canonical snapshot: `artifacts/protocol/protocol_v1_1.yaml`
 - Confirmatory inference: dataset-level exact sign-flip tests (see `statistical_analysis_v1_2.yaml`)
 
 Canonical snapshot: `artifacts/protocol/protocol_v1_2.yaml`
+
+## 2026-09-01T05:28:00Z — Protocol v1.2.1 issued (outcome-blind implementation amendment)
+
+- The first confirmatory unit (dataset 44, repeat 0, fold 0) was requested but **no model execution occurred**
+- Execution was **stopped before model fitting** because two parameters required by v1.2 were not machine-readable/frozen:
+  1. exact GBDT HPO search-space definitions and sampling semantics
+  2. exact SynthCity TabDDPM protocol-mode constructor settings
+- **No confirmatory prediction, metric, loss, HPO score, or generator output** had been produced
+- v1.2.1 merely completes specifications already required by v1.2; dataset cohort and scientific hypotheses remain unchanged
+- Historical v1.2 artifacts and tag `protocol-v1.2-freeze` are preserved unchanged
+
+Canonical amendment: `artifacts/protocol/protocol_v1_2_1_amendment.yaml`  
+Machine-readable configs: `configs/hpo_v1_2_1.yaml`, `configs/a3_protocol_v1_2_1.yaml`  
+Confirmatory freeze: `artifacts/manifests/confirmatory_freeze_v1_2_1.yaml`  
+Tag: `protocol-v1.2.1-freeze`

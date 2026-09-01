@@ -1,0 +1,78 @@
+freeze_name: confirmatory_freeze_v1_2_1
+timestamp_utc: '2026-09-01T05:28:00Z'
+protocol_version: '1.2.1'
+supersedes: confirmatory_freeze_v1_2
+supersedes_tag: protocol-v1.2-freeze
+outcome_blind: true
+confirmatory_models_fitted_at_issuance: false
+
+inherited_from_v1_2:
+  protocol: v1.2
+  statistical_analysis: artifacts/protocol/statistical_analysis_v1_2.yaml
+  dataset_cohort_csv: artifacts/manifests/datasets_frozen_v1_2.csv
+  protocol_v1_2_yaml: artifacts/protocol/protocol_v1_2.yaml
+  confirmatory_freeze_v1_2_yaml: artifacts/manifests/confirmatory_freeze_v1_2.yaml
+
+dataset_cohort_sha256: 209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34
+D: 10
+
+dataset_ids:
+- resolved_openml_id: 44
+  openml_version: 1
+  dataset_name: spambase
+- resolved_openml_id: 1067
+  openml_version: 1
+  dataset_name: kc1
+- resolved_openml_id: 1489
+  openml_version: 1
+  dataset_name: phoneme
+- resolved_openml_id: 40983
+  openml_version: 2
+  dataset_name: wilt
+- resolved_openml_id: 42178
+  openml_version: 1
+  dataset_name: telco-customer-churn
+- resolved_openml_id: 46911
+  openml_version: 1
+  dataset_name: Bank_Customer_Churn
+- resolved_openml_id: 46915
+  openml_version: 4
+  dataset_name: churn
+- resolved_openml_id: 46921
+  openml_version: 7
+  dataset_name: diabetes
+- resolved_openml_id: 46927
+  openml_version: 1
+  dataset_name: Fitness_Club
+- resolved_openml_id: 46952
+  openml_version: 2
+  dataset_name: qsar-biodeg
+
+v1_2_1_amendments:
+  protocol_v1_2_1_amendment_yaml: artifacts/protocol/protocol_v1_2_1_amendment.yaml
+  hpo_v1_2_1_yaml: configs/hpo_v1_2_1.yaml
+  a3_protocol_v1_2_1_yaml: configs/a3_protocol_v1_2_1.yaml
+
+artifact_sha256:
+  protocol_v1_2_1_amendment_yaml: c8cdc18034a97caafa12e539d9f7f51fbf2b4e568770d5b3b6454c365a1229cc
+  hpo_v1_2_1_yaml: 092219107a9dadffedf8c663198b3d7a6da1a91bb3496d11dc797fb05eba5c7d
+  a3_protocol_v1_2_1_yaml: 1193b79df9f43b7a7356c27e9ddf77ddde68300731c34ec3ddfbfdb7b6782151
+  dataset_cohort_csv: 209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34
+
+unchanged_from_v1_2:
+  endpoints: inherited
+  statistical_analysis: inherited
+  augmentation_arms: [A0, A1, A2, A3, A0+]
+  learners: [xgboost, catboost, tabpfn, tabicl]
+  splits: inherited
+  preprocessing: inherited
+  calibration: inherited
+  conformal: inherited
+
+amendment_scope:
+  - hpo_search_spaces_and_sampling_semantics
+  - a3_synthcity_tabddpm_protocol_mode
+
+blocked_execution_note: >
+  First confirmatory unit stopped before model fit on 2026-09-01 due to missing
+  machine-readable HPO and A3 specifications. No confirmatory results exist.
