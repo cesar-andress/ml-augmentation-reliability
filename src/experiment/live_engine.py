@@ -37,6 +37,7 @@ from src.evaluation.metrics import compute_metrics
 from src.experiment.confirmatory_constants import (
     ARMS,
     A3_CONFIG_SHA256,
+    CHECKPOINT_SHA256,
     CHECKPOINTS,
     FREEZE_TAG,
     GBDT_LEARNERS,
@@ -48,7 +49,10 @@ from src.experiment.confirmatory_constants import (
     STANDARD_HPO_CANDIDATES,
     SYNTHCITY_PYTHON,
     TEMPERATURES,
+    arm_to_fs_name,
+    cell_manifest_stem,
 )
+from src.experiment.phase_artifacts import FINALIZATION_HASH_RULE
 from src.experiment.confirmatory_plan import expected_final_cells
 from src.experiment.confirmatory_schema import CONFIRMATORY_RESULT_COLUMNS
 from src.experiment.hpo_v1_2_1 import (
@@ -121,7 +125,7 @@ class LivePhaseEngine:
         self.ctx = ctx
 
     def hydrate_skipped_phase(self, phase: str) -> None:
-        """Reload in-memory context from persisted artifacts when resuming COMPLETE phases."""
+        """Reload in-memory context from persisted artifacts (READ-ONLY; never rewrite)."""
         if phase == "P00_VALIDATE_FREEZE":
             if self.ctx.validation is None and not self.ctx.adapters.skip_freeze_validation:
                 from src.experiment.confirmatory_validation import validate_pre_run
@@ -133,106 +137,161 @@ class LivePhaseEngine:
                     fold=self.ctx.fold,
                 )
         elif phase == "P01_LOAD_DATASET":
-            self.p01_load_dataset()
+            self._hydrate_p01_readonly()
         elif phase == "P02_BUILD_SPLITS":
             if self.ctx.bundle is None:
-                self.p01_load_dataset()
-            self.p02_build_splits()
+                self._hydrate_p01_readonly()
+            self._hydrate_p02_readonly()
         elif phase == "P03_FIT_PREPROCESSING":
             if self.ctx.split is None:
                 self.hydrate_skipped_phase("P02_BUILD_SPLITS")
-            pre_path = self.ctx.root / "manifests" / "preprocessor.pkl"
-            if pre_path.exists() and self.ctx.bundle is not None and self.ctx.split is not None:
-                with pre_path.open("rb") as f:
-                    pre = pickle.load(f)
-                X = self.ctx.bundle.X
-                split = self.ctx.split
-                parts = {
-                    "train": pre.transform(X.iloc[split.train]),
-                    "cal_a": pre.transform(X.iloc[split.cal_a]),
-                    "cal_b": pre.transform(X.iloc[split.cal_b]),
-                    "test": pre.transform(X.iloc[split.test]),
-                }
-                self.ctx.pre = pre
-                self.ctx.X_parts = parts
-                self.ctx.y_parts = {
-                    "train": self.ctx.y_bin[split.train],
-                    "cal_a": self.ctx.y_bin[split.cal_a],
-                    "cal_b": self.ctx.y_bin[split.cal_b],
-                    "test": self.ctx.y_bin[split.test],
-                }
-                self.ctx.fold_seed = int(split.seed)
-            else:
-                self.p03_fit_preprocessing()
+            self._hydrate_p03_readonly()
         elif phase == "P04_PREPARE_OUTER_AUGMENTATIONS":
-            # Reload A0–A3 from disk if present; else caller must re-run phase
             if not self.ctx.X_parts:
                 self.hydrate_skipped_phase("P03_FIT_PREPROCESSING")
-            self.ctx.outer_aug["A0"] = augment_a0(self.ctx.X_parts["train"], self.ctx.y_parts["train"])
-            for arm in ("A1", "A2", "A3"):
-                feat = self.ctx.root / "generated" / arm / "features.parquet"
-                lab = self.ctx.root / "generated" / arm / "labels.npy"
-                man = self.ctx.root / "generated" / arm / "manifest.json"
-                if feat.exists() and lab.exists() and man.exists():
-                    from src.augmentation.arms import AugmentResult
-
-                    m = json.loads(man.read_text())
-                    X = pd.read_parquet(feat)
-                    y = np.load(lab)
-                    self.ctx.outer_aug[arm] = AugmentResult(
-                        X=X,
-                        y=y,
-                        repair_fraction=float(m.get("repair_row_fraction", 0.0)),
-                        n_synthetic=int(m.get("n_synthetic", 0)),
-                        method=str(m.get("method", arm)),
-                        generator_fit_seconds=float(m.get("generator_fit_seconds", 0.0)),
-                        generator_sample_seconds=float(m.get("generator_sample_seconds", 0.0)),
-                        scientific_mark=str(m.get("scientific_mark", "")),
-                        extra={
-                            "repair_cell_fraction": float(m.get("repair_cell_fraction", 0.0)),
-                            **(m.get("extra") or {}),
-                        },
-                    )
-                    self.ctx.generator_costs[arm] = float(
-                        m.get("generator_fit_seconds", 0.0) + m.get("generator_sample_seconds", 0.0)
-                    )
+            self._hydrate_p04_readonly()
         elif phase == "P05_PREPARE_INNER_AUGMENTATION_CACHE":
             if not self.ctx.X_parts:
                 self.hydrate_skipped_phase("P03_FIT_PREPROCESSING")
-            # Prefer re-running cache build only if missing; hydrate from disk when complete
-            need = False
+            self._hydrate_p05_readonly()
+        elif phase == "P06_RUN_GBDT_HPO":
+            self._hydrate_p06_readonly()
+        elif phase == "P07_RUN_A0PLUS":
+            self._hydrate_p07_readonly()
+
+    def _hydrate_p06_readonly(self) -> None:
+        for learner in GBDT_LEARNERS:
+            for arm in HPO_ARMS:
+                best_path = self.ctx.root / "hpo" / learner / arm / "best.json"
+                if not best_path.exists():
+                    raise FileNotFoundError(f"cannot hydrate P06: missing {best_path}")
+                self.ctx.hpo_best[(learner, arm)] = json.loads(best_path.read_text())
+
+    def _hydrate_p07_readonly(self) -> None:
+        for learner in GBDT_LEARNERS:
+            best_path = self.ctx.root / "hpo" / learner / "A0plus" / "best.json"
+            match_path = self.ctx.root / "hpo" / learner / "A0plus" / "compute_match.json"
+            if not best_path.exists():
+                raise FileNotFoundError(f"cannot hydrate P07: missing {best_path}")
+            self.ctx.hpo_best[(learner, "A0+")] = json.loads(best_path.read_text())
+            if match_path.exists():
+                self.ctx.a0plus_info[learner] = json.loads(match_path.read_text())
+
+    def _hydrate_p01_readonly(self) -> None:
+        """Load dataset into memory without rewriting dataset_manifest.json."""
+        man_path = self.ctx.root / "manifests" / "dataset_manifest.json"
+        if not man_path.exists():
+            raise FileNotFoundError("cannot hydrate P01: manifests/dataset_manifest.json missing")
+        # Load payload via same loaders; do not write scientific manifests.
+        self._load_dataset_bundle(write_manifest=False)
+
+    def _hydrate_p02_readonly(self) -> None:
+        from src.data.splitting import SplitIndices
+
+        man_path = self.ctx.root / "manifests" / "split_manifest.json"
+        idx_path = self.ctx.root / "manifests" / "split_indices.npz"
+        if not man_path.exists() or not idx_path.exists():
+            raise FileNotFoundError("cannot hydrate P02: split manifests missing")
+        man = json.loads(man_path.read_text())
+        idx = np.load(idx_path)
+        split = SplitIndices(
+            train=np.asarray(idx["train"]),
+            cal_a=np.asarray(idx["cal_a"]),
+            cal_b=np.asarray(idx["cal_b"]),
+            test=np.asarray(idx["test"]),
+            repeat=int(man["repeat"]),
+            fold=int(man["fold"]),
+            seed=int(man["seed"]),
+        )
+        split.assert_no_overlap()
+        self.ctx.split = split
+        self.ctx.fold_seed = int(split.seed)
+
+    def _hydrate_p03_readonly(self) -> None:
+        pre_path = self.ctx.root / "manifests" / "preprocessor.pkl"
+        if not pre_path.exists():
+            raise FileNotFoundError("cannot hydrate P03: preprocessor.pkl missing")
+        if self.ctx.bundle is None or self.ctx.split is None or self.ctx.y_bin is None:
+            raise RuntimeError("cannot hydrate P03: dataset/split context missing")
+        with pre_path.open("rb") as f:
+            pre = pickle.load(f)
+        X = self.ctx.bundle.X
+        split = self.ctx.split
+        self.ctx.pre = pre
+        self.ctx.X_parts = {
+            "train": pre.transform(X.iloc[split.train]),
+            "cal_a": pre.transform(X.iloc[split.cal_a]),
+            "cal_b": pre.transform(X.iloc[split.cal_b]),
+            "test": pre.transform(X.iloc[split.test]),
+        }
+        self.ctx.y_parts = {
+            "train": self.ctx.y_bin[split.train],
+            "cal_a": self.ctx.y_bin[split.cal_a],
+            "cal_b": self.ctx.y_bin[split.cal_b],
+            "test": self.ctx.y_bin[split.test],
+        }
+        self.ctx.fold_seed = int(split.seed)
+
+    def _hydrate_p04_readonly(self) -> None:
+        from src.augmentation.arms import AugmentResult
+
+        self.ctx.outer_aug["A0"] = augment_a0(self.ctx.X_parts["train"], self.ctx.y_parts["train"])
+        for arm in ("A1", "A2", "A3"):
+            feat = self.ctx.root / "generated" / arm / "features.parquet"
+            lab = self.ctx.root / "generated" / arm / "labels.npy"
+            man = self.ctx.root / "generated" / arm / "manifest.json"
+            if not (feat.exists() and lab.exists() and man.exists()):
+                raise FileNotFoundError(f"cannot hydrate P04: missing generated/{arm} artifacts")
+            m = json.loads(man.read_text())
+            self.ctx.outer_aug[arm] = AugmentResult(
+                X=pd.read_parquet(feat),
+                y=np.load(lab),
+                repair_fraction=float(m.get("repair_row_fraction", 0.0)),
+                n_synthetic=int(m.get("n_synthetic", 0)),
+                method=str(m.get("method", arm)),
+                generator_fit_seconds=float(m.get("generator_fit_seconds", 0.0)),
+                generator_sample_seconds=float(m.get("generator_sample_seconds", 0.0)),
+                scientific_mark=str(m.get("scientific_mark", "")),
+                extra={
+                    "repair_cell_fraction": float(m.get("repair_cell_fraction", 0.0)),
+                    **(m.get("extra") or {}),
+                },
+            )
+            self.ctx.generator_costs[arm] = float(
+                m.get("generator_fit_seconds", 0.0) + m.get("generator_sample_seconds", 0.0)
+            )
+
+    def _hydrate_p05_readonly(self) -> None:
+        Xtr = self.ctx.X_parts["train"]
+        ytr = self.ctx.y_parts["train"]
+        skf = StratifiedKFold(n_splits=INNER_CV_FOLDS, shuffle=True, random_state=self.ctx.fold_seed)
+        self.ctx.inner_cache = {arm: {} for arm in ("A0", "A1", "A2", "A3")}
+        for inner_i, (tr_loc, va_loc) in enumerate(skf.split(Xtr, ytr)):
+            X_v = Xtr.iloc[va_loc]
+            y_v = ytr[va_loc]
+            self.ctx.inner_cache["A0"][inner_i] = {
+                "X_train": Xtr.iloc[tr_loc],
+                "y_train": ytr[tr_loc],
+                "X_val": X_v,
+                "y_val": y_v,
+            }
             for arm in ("A1", "A2", "A3"):
-                for i in range(INNER_CV_FOLDS):
-                    if not (self.ctx.root / "hpo" / "inner_cache" / arm / f"fold_{i}" / "features.parquet").exists():
-                        need = True
-            if need:
-                return  # leave empty; phase should be re-run
-            # rebuild A0 inner + load augmented
-            Xtr = self.ctx.X_parts["train"]
-            ytr = self.ctx.y_parts["train"]
-            skf = StratifiedKFold(n_splits=INNER_CV_FOLDS, shuffle=True, random_state=self.ctx.fold_seed)
-            self.ctx.inner_cache = {arm: {} for arm in ("A0", "A1", "A2", "A3")}
-            for inner_i, (tr_loc, va_loc) in enumerate(skf.split(Xtr, ytr)):
-                X_v = Xtr.iloc[va_loc]
-                y_v = ytr[va_loc]
-                self.ctx.inner_cache["A0"][inner_i] = {
-                    "X_train": Xtr.iloc[tr_loc],
-                    "y_train": ytr[tr_loc],
+                path = self.ctx.root / "hpo" / "inner_cache" / arm / f"fold_{inner_i}"
+                if not (path / "features.parquet").exists():
+                    raise FileNotFoundError(f"cannot hydrate P05: missing {path}")
+                self.ctx.inner_cache[arm][inner_i] = {
+                    "X_train": pd.read_parquet(path / "features.parquet"),
+                    "y_train": np.load(path / "labels.npy"),
                     "X_val": X_v,
                     "y_val": y_v,
+                    "seed": json.loads((path / "manifest.json").read_text()).get("seed"),
                 }
-                for arm in ("A1", "A2", "A3"):
-                    path = self.ctx.root / "hpo" / "inner_cache" / arm / f"fold_{inner_i}"
-                    self.ctx.inner_cache[arm][inner_i] = {
-                        "X_train": pd.read_parquet(path / "features.parquet"),
-                        "y_train": np.load(path / "labels.npy"),
-                        "X_val": X_v,
-                        "y_val": y_v,
-                        "seed": json.loads((path / "manifest.json").read_text()).get("seed"),
-                    }
 
     # ---- P01 ----
     def p01_load_dataset(self) -> None:
+        self._load_dataset_bundle(write_manifest=True)
+
+    def _load_dataset_bundle(self, *, write_manifest: bool) -> None:
         from src.data.openml_loader import load_frozen_openml_raw
 
         expected_checksum = self.ctx.adapters.expected_checksum
@@ -277,22 +336,23 @@ class LivePhaseEngine:
         self.ctx.y_meta = y_meta
         self.ctx.row_ids = row_ids
 
-        manifest = {
-            "dataset_id": int(bundle.openml_id),
-            "dataset_version": bundle.version,
-            "dataset_name": bundle.name,
-            "target": y_meta,
-            "raw_checksum": bundle.checksum,
-            "checksum_algorithm": "sha256(X.parquet_bytes||y.parquet_bytes)",
-            "n_rows": int(len(bundle.X)),
-            "n_features": int(bundle.X.shape[1]),
-            "class_counts": class_counts,
-            "retrieval_source": retrieval_source,
-            "row_id_policy": "stable_integer_index_0_n_minus_1_before_split",
-            "scientific": self.ctx.adapters.scientific,
-            "mark": self.ctx.adapters.mark,
-        }
-        write_json(self.ctx.root / "manifests" / "dataset_manifest.json", manifest)
+        if write_manifest:
+            manifest = {
+                "dataset_id": int(bundle.openml_id),
+                "dataset_version": bundle.version,
+                "dataset_name": bundle.name,
+                "target": y_meta,
+                "raw_checksum": bundle.checksum,
+                "checksum_algorithm": "sha256(X.parquet_bytes||y.parquet_bytes)",
+                "n_rows": int(len(bundle.X)),
+                "n_features": int(bundle.X.shape[1]),
+                "class_counts": class_counts,
+                "retrieval_source": retrieval_source,
+                "row_id_policy": "stable_integer_index_0_n_minus_1_before_split",
+                "scientific": self.ctx.adapters.scientific,
+                "mark": self.ctx.adapters.mark,
+            }
+            write_json(self.ctx.root / "manifests" / "dataset_manifest.json", manifest)
 
     # ---- P02 ----
     def p02_build_splits(self) -> None:
@@ -759,6 +819,8 @@ class LivePhaseEngine:
 
     # ---- P08 ----
     def p08_final_learners(self) -> None:
+        import warnings
+
         cells = expected_final_cells()
         build = self.ctx.adapters.resolve_build_learner()
         for cell in cells:
@@ -774,6 +836,8 @@ class LivePhaseEngine:
                 train_X, train_y = aug.X, aug.y
                 aug_checksum = _sha256_frame(train_X)
 
+            ckpt_sha256 = None
+            ckpt_prefix = None
             if learner in GBDT_LEARNERS:
                 best = self.ctx.hpo_best[(learner, arm)]
                 params = dict(best["best_hyperparameters"])
@@ -787,8 +851,9 @@ class LivePhaseEngine:
                 hpo_idx = best["best_candidate_index"]
                 hpo_count = best["n_candidates"]
             else:
-                # TFM frozen identities
+                # TFM frozen identities — verify FULL-FILE checkpoint SHA before execution
                 ckpt = self.ctx.repo_root / CHECKPOINTS[learner]
+                ckpt_sha256, ckpt_prefix = self._verify_tfm_checkpoint(learner, ckpt)
                 cfg = {
                     learner: {
                         "model_path": str(ckpt),
@@ -815,16 +880,17 @@ class LivePhaseEngine:
                 hpo_idx = None
                 hpo_count = 0
 
-            model = build(learner, cfg, cat_features=self.ctx.pre.meta.categorical_cols)
-            with timed_gpu() as fit_t:
-                model.fit(train_X, train_y)
+            captured: list[str] = []
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                model = build(learner, cfg, cat_features=self.ctx.pre.meta.categorical_cols)
+                with timed_gpu() as fit_t:
+                    model.fit(train_X, train_y)
+                for w in caught:
+                    msg = str(w.message)
+                    if "device" in msg.lower() or "FutureWarning" in w.category.__name__ or "auto_scale" in msg:
+                        captured.append(f"{w.category.__name__}: {msg}")
             self.ctx.fitted[(learner, arm)] = model
-
-            ckpt_hash = None
-            if learner in ("tabpfn", "tabicl"):
-                p = Path(cfg[learner]["model_path"])
-                if p.exists():
-                    ckpt_hash = _sha256_bytes(p.read_bytes()[: 1024 * 1024])  # first 1MB marker if huge
 
             man = {
                 "learner": learner,
@@ -832,17 +898,32 @@ class LivePhaseEngine:
                 "arm": arm,
                 "training_artifact_checksum": aug_checksum,
                 "selected_hyperparameters": cfg.get(learner, cfg),
-                "checkpoint_hash": ckpt_hash,
+                "checkpoint_sha256": ckpt_sha256,
+                "checkpoint_prefix_1mb_sha256": ckpt_prefix,
                 "learner_fit_seconds": fit_t.seconds,
                 "peak_gpu_memory_mb": fit_t.peak_gpu_memory_mb,
                 "seed": self.ctx.fold_seed,
                 "environment": self.ctx.adapters.resource_snapshot(),
                 "hpo_candidate_count": hpo_count,
                 "best_hpo_candidate_index": hpo_idx,
+                "runtime_warnings": captured,
                 "status": "ok",
                 "scientific_status": SCIENTIFIC_STATUS_CONFIRMATORY if self.ctx.adapters.scientific else self.ctx.adapters.mark,
             }
-            write_json(self.ctx.root / "manifests" / "cells" / f"{learner}_{arm.replace('+', 'plus')}.json", man)
+            write_json(self.ctx.root / "manifests" / "cells" / f"{cell_manifest_stem(learner, arm)}.json", man)
+
+    def _verify_tfm_checkpoint(self, learner: str, path: Path) -> tuple[str, str]:
+        if not path.exists():
+            raise AssertionError(f"missing frozen checkpoint for {learner}: {path}")
+        data = path.read_bytes()
+        full = _sha256_bytes(data)
+        expected = CHECKPOINT_SHA256[learner]
+        if full != expected:
+            raise AssertionError(
+                f"{learner} checkpoint SHA256 mismatch: got {full}, expected {expected}"
+            )
+        prefix = _sha256_bytes(data[: 1024 * 1024])
+        return full, prefix
 
     # ---- P09 ----
     def p09_predict_cal_a(self) -> None:
@@ -867,7 +948,7 @@ class LivePhaseEngine:
                     p = np.asarray(model.predict_proba(X), dtype=np.float64)
                     self.ctx.cal_a_preds[(learner, arm)] = {"primary": p}
             guard.mark_cal_a_complete()
-            out = self.ctx.root / "predictions" / learner / arm
+            out = self.ctx.root / "predictions" / learner / arm_to_fs_name(arm)
             out.mkdir(parents=True, exist_ok=True)
             payload = {"row_ids": row_ids.tolist()}
             for k, v in self.ctx.cal_a_preds[(learner, arm)].items():
@@ -882,7 +963,7 @@ class LivePhaseEngine:
             platt = PlattCalibrator().fit(p_raw, y)
             iso = IsotonicCalibrator().fit(p_raw, y)
             thr = tune_threshold_f1(y, p_raw)
-            out = self.ctx.root / "postprocessing" / learner / arm.replace("+", "plus")
+            out = self.ctx.root / "postprocessing" / learner / arm_to_fs_name(arm)
             out.mkdir(parents=True, exist_ok=True)
             write_json(
                 out / "platt.json",
@@ -907,7 +988,7 @@ class LivePhaseEngine:
                 model.params["softmax_temperature"] = 1.0
             p = np.asarray(model.predict_proba(X), dtype=np.float64)
             self.ctx.cal_b_preds[(learner, arm)] = p
-            out = self.ctx.root / "predictions" / learner / arm.replace("+", "plus")
+            out = self.ctx.root / "predictions" / learner / arm_to_fs_name(arm)
             out.mkdir(parents=True, exist_ok=True)
             write_json(out / "cal_b.json", {"row_ids": row_ids.tolist(), "p_raw": p.tolist()})
             self.ctx.guard.get(learner, arm).mark_cal_b_complete()
@@ -920,7 +1001,7 @@ class LivePhaseEngine:
             qhat, meta = conformal_quantile_with_meta(scores, alpha=0.10)
             meta["quantile"] = qhat
             meta["score_checksum"] = _sha256_array(scores)
-            out = self.ctx.root / "postprocessing" / learner / arm.replace("+", "plus")
+            out = self.ctx.root / "postprocessing" / learner / arm_to_fs_name(arm)
             out.mkdir(parents=True, exist_ok=True)
             write_json(out / "conformal.json", meta)
             self.ctx.conformal[(learner, arm)] = meta
@@ -944,18 +1025,13 @@ class LivePhaseEngine:
             else:
                 p = np.asarray(model.predict_proba(X), dtype=np.float64)
                 self.ctx.test_preds[(learner, arm)] = {"primary": p}
-            out = self.ctx.root / "predictions" / learner / arm.replace("+", "plus")
+            out = self.ctx.root / "predictions" / learner / arm_to_fs_name(arm)
             out.mkdir(parents=True, exist_ok=True)
             payload = {"row_ids": row_ids.tolist(), "test_unlocked_at": guard.test_unlocked_at}
             for k, v in self.ctx.test_preds[(learner, arm)].items():
                 payload[f"p_{k}"] = v.tolist()
             write_json(out / "test.json", payload)
-            # update cell manifest
-            cell_path = self.ctx.root / "manifests" / "cells" / f"{learner}_{arm.replace('+', 'plus')}.json"
-            if cell_path.exists():
-                cell = json.loads(cell_path.read_text())
-                cell["test_unlocked_at"] = guard.test_unlocked_at
-                write_json(cell_path, cell)
+            # Do not mutate P08 cell manifests (provenance). Unlock time lives in test.json.
 
     # ---- P14 ----
     def p14_metrics(self) -> None:
@@ -985,7 +1061,7 @@ class LivePhaseEngine:
             p_iso_c = clip_prob(p_iso)
             ll_iso = float(sk_ll(y_test, np.column_stack([1 - p_iso_c, p_iso_c]), labels=[0, 1]))
 
-            cell_man = self.ctx.root / "manifests" / "cells" / f"{learner}_{arm.replace('+', 'plus')}.json"
+            cell_man = self.ctx.root / "manifests" / "cells" / f"{cell_manifest_stem(learner, arm)}.json"
             cell = json.loads(cell_man.read_text()) if cell_man.exists() else {}
             aug = self.ctx.outer_aug.get("A0" if arm in {"A0", "A0+"} else arm)
             repair_row = float(getattr(aug, "repair_fraction", 0.0)) if aug else 0.0
@@ -1054,7 +1130,7 @@ class LivePhaseEngine:
             # store supplementary platt/isotonic as separate calibration rows? schema has one calibration field.
             # Keep primary raw row; write sidecar metrics with platt/isotonic log loss.
             write_json(
-                self.ctx.root / "metrics" / f"{learner}_{arm.replace('+', 'plus')}.json",
+                self.ctx.root / "metrics" / f"{cell_manifest_stem(learner, arm)}.json",
                 {
                     **met,
                     "log_loss_raw": met["log_loss_raw"],
@@ -1104,6 +1180,11 @@ class LivePhaseEngine:
 
     # ---- P16 ----
     def p16_finalize(self) -> None:
+        """Write unit_complete with P00–P15 hashes only (non-circular P16 rule).
+
+        P16 checksum is recorded afterwards in status/finalization_record.json and
+        unit_status by the orchestrator — see FINALIZATION_HASH_RULE.
+        """
         report_path = self.ctx.root / "manifests" / "validation_report.json"
         if not report_path.exists():
             raise AssertionError("validation_report.json missing")
@@ -1112,6 +1193,8 @@ class LivePhaseEngine:
         if status_path.exists():
             st = json.loads(status_path.read_text())
             for p, rec in st.get("phases", {}).items():
+                if p == "P16_FINALIZE_UNIT":
+                    continue  # avoid null/circular P16 entry inside unit_complete
                 phase_hashes[p] = (rec.get("output_hashes") or {}).get("checksum")
         cell_statuses = {
             f"{r['learner']}_{r['arm']}": r["status"] for r in self.ctx.result_rows
@@ -1123,6 +1206,8 @@ class LivePhaseEngine:
             "freeze_tag": FREEZE_TAG,
             "cohort_sha256": (self.ctx.validation or {}).get("cohort_sha256"),
             "phase_hashes": phase_hashes,
+            "phase_hashes_scope": "P00_P15",
+            "finalization_hash_rule": FINALIZATION_HASH_RULE,
             "cell_statuses": cell_statuses,
             "result_table_checksum": _sha256_bytes(result_path.read_bytes()),
             "completion_utc": datetime.now(timezone.utc).isoformat(),

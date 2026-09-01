@@ -1,0 +1,10 @@
+{
+  "purpose": "post_hygiene_after_recovery",
+  "sci_byte_identical": true,
+  "meta_changed": [
+    "logs/confirmatory.log",
+    "manifests/unit_manifest.json",
+    "status/unit_status.json"
+  ],
+  "n_pre": 259
+}

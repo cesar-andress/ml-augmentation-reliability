@@ -56,7 +56,33 @@ CHECKPOINTS = {
     "tabicl": "checkpoints/tabicl/tabicl-classifier-v1-20250208.ckpt",
 }
 
+# Full-file SHA256 of frozen TFM checkpoints (protocol identity).
+CHECKPOINT_SHA256 = {
+    "tabpfn": "f65a35685aeef42e31b796d9bfa34e68d6fc780bc98e7bff7763802964cf435f",
+    "tabicl": "04c5c1d261c1f782dc9b263990dcfa5152b1949ed8451ad16c010cdafbea07e0",
+}
+
 TEMPERATURES = {"primary": 1.0, "sensitivity": 0.9}
+
+
+def arm_to_fs_name(arm: str) -> str:
+    """Map scientific arm label to a single filesystem-safe directory name.
+
+    Scientific tables/manifests keep 'A0+'; on-disk directories use 'A0plus'.
+    """
+    if arm == "A0+":
+        return "A0plus"
+    return arm
+
+
+def cell_manifest_stem(learner: str, arm: str) -> str:
+    return f"{learner}_{arm_to_fs_name(arm)}"
+
+
+def expected_scientific_arms_for_learner(learner: str) -> tuple[str, ...]:
+    if learner in GBDT_LEARNERS:
+        return ("A0", "A1", "A2", "A3", "A0+")
+    return ("A0", "A1", "A2", "A3")
 
 
 def unit_id(*, dataset_id: int, repeat: int, fold: int) -> str:

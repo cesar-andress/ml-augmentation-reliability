@@ -21,6 +21,14 @@ from src.experiment.confirmatory_validation import validate_pre_run
 from src.experiment.live_adapters import LiveAdapters
 from src.experiment.live_engine import LiveContext, LivePhaseEngine
 from src.experiment.phase_state import PhaseStateManager, compute_config_hash
+from src.experiment.phase_artifacts import (
+    FINALIZATION_HASH_RULE,
+    ProvenanceConflictError,
+    aggregate_inventory_checksum,
+    artifact_record,
+    build_phase_inventory,
+)
+from src.experiment.environment_manifest import write_environment_manifest
 from src.logging_utils import setup_logger, write_json
 
 
@@ -35,6 +43,7 @@ class ConfirmatoryRunConfig:
     force_rerun_failed: bool = False
     log_level: str = "INFO"
     adapters: LiveAdapters = field(default_factory=LiveAdapters)
+    unit_dir: Path | None = None  # optional override (tests); never point at protected units
 
 
 class ConfirmatoryRunner:
@@ -42,7 +51,7 @@ class ConfirmatoryRunner:
         self.cfg = cfg
         self.repo_root = Path(cfg.repo_root).resolve()
         self.uid = unit_id(dataset_id=cfg.dataset_id, repeat=cfg.repeat, fold=cfg.fold)
-        self.root = unit_root(self.repo_root, self.uid)
+        self.root = Path(cfg.unit_dir).resolve() if cfg.unit_dir is not None else unit_root(self.repo_root, self.uid)
         self.validation: dict[str, Any] | None = None
         self.plan: dict[str, Any] | None = None
         self._config_hash = compute_config_hash(
@@ -65,6 +74,7 @@ class ConfirmatoryRunner:
             allow_hash_mismatch_reset=bool(cfg.dry_run),
         )
         self.engine: LivePhaseEngine | None = None
+        self._env_artifact: dict[str, Any] | None = None
 
     def _ensure_dirs(self) -> None:
         for sub in (
@@ -113,6 +123,7 @@ class ConfirmatoryRunner:
                 validation=self.validation,
             )
         )
+        self._env_artifact: dict[str, Any] | None = None
         phase_runners = {
             "P00_VALIDATE_FREEZE": self._phase_validate_freeze,
             "P01_LOAD_DATASET": lambda: self.engine.p01_load_dataset(),
@@ -130,7 +141,7 @@ class ConfirmatoryRunner:
             "P13_PREDICT_TEST": lambda: self.engine.p13_predict_test(),
             "P14_COMPUTE_METRICS": lambda: self.engine.p14_metrics(),
             "P15_VALIDATE_OUTPUTS": lambda: self.engine.p15_validate_outputs(),
-            "P16_FINALIZE_UNIT": lambda: self.engine.p16_finalize(),
+            "P16_FINALIZE_UNIT": self._phase_finalize_unit,
         }
         for phase in PHASES:
             if not self.phase_mgr.should_run_phase(
@@ -140,7 +151,7 @@ class ConfirmatoryRunner:
                 input_hashes={"config_hash": self._config_hash},
             ):
                 self.logger.info("skip phase %s (resume reuse)", phase)
-                # Hydrate in-memory context from disk for downstream phases
+                # Hydrate in-memory context from disk for downstream phases (read-only)
                 if self.engine is not None:
                     self.engine.hydrate_skipped_phase(phase)
                     if phase == "P00_VALIDATE_FREEZE" and self.validation is None:
@@ -149,10 +160,14 @@ class ConfirmatoryRunner:
                         self.engine.ctx.validation = self.validation
                 continue
             self._run_phase(phase, phase_runners[phase])
-            # keep validation in sync after P00
+            # keep validation in sync after P00; write environment before model execution
             if phase == "P00_VALIDATE_FREEZE" and self.engine is not None:
                 self.engine.ctx.validation = self.validation
                 self.validation = self.engine.ctx.validation or self.validation
+                env = write_environment_manifest(
+                    self.root, repo_root=self.repo_root, validation=self.validation
+                )
+                self._env_artifact = env["artifact"]
         unit_manifest = self._build_unit_manifest(dry_run=False)
         write_json(self.root / "manifests" / "unit_manifest.json", unit_manifest)
         return {
@@ -164,38 +179,51 @@ class ConfirmatoryRunner:
             "unit_root": str(self.root),
         }
 
+    def _phase_finalize_unit(self) -> None:
+        """P16: write unit_complete (P00–P15 hashes) then non-circular finalization_record."""
+        assert self.engine is not None
+        self.engine.p16_finalize()
+        complete_path = self.root / "status" / "unit_complete.json"
+        complete_sha = hashlib.sha256(complete_path.read_bytes()).hexdigest()
+        record = {
+            "finalization_hash_rule": FINALIZATION_HASH_RULE,
+            "unit_complete_path": "status/unit_complete.json",
+            "unit_complete_sha256": complete_sha,
+            "unit_complete_size": complete_path.stat().st_size,
+            "p16_primary_checksum": complete_sha,
+            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        }
+        write_json(self.root / "status" / "finalization_record.json", record)
+
     def _run_phase(self, phase: str, fn) -> None:
         self.phase_mgr.start_phase(phase, input_hashes={"config_hash": self._config_hash})
         t0 = datetime.now(timezone.utc)
         try:
             fn()
-            out_hash = hashlib.sha256(json.dumps({"phase": phase, "ok": True}).encode()).hexdigest()
-            # Prefer concrete artifact checksum when available
-            artifact = self._phase_artifact_checksum(phase)
-            if artifact:
-                out_hash = artifact
+            artifacts: list[dict[str, Any]] = []
+            try:
+                if phase != "P00_VALIDATE_FREEZE":
+                    artifacts = build_phase_inventory(self.root, phase)
+            except ProvenanceConflictError:
+                # Phase may still be writing deferred files; allow empty only for P00
+                if phase == "P00_VALIDATE_FREEZE":
+                    artifacts = []
+                else:
+                    raise
+            if phase == "P00_VALIDATE_FREEZE":
+                artifacts = []
+            out_hash = aggregate_inventory_checksum(artifacts) if artifacts else hashlib.sha256(
+                json.dumps({"phase": phase, "ok": True}, sort_keys=True).encode()
+            ).hexdigest()
             self.phase_mgr.complete_phase(
                 phase,
                 output_hashes={"checksum": out_hash},
+                output_artifacts=artifacts,
                 duration=(datetime.now(timezone.utc) - t0).total_seconds(),
             )
         except Exception as e:
             self.phase_mgr.fail_phase(phase, exception=f"{type(e).__name__}: {e}\n{traceback.format_exc()}")
             raise
-
-    def _phase_artifact_checksum(self, phase: str) -> str | None:
-        mapping = {
-            "P01_LOAD_DATASET": self.root / "manifests" / "dataset_manifest.json",
-            "P02_BUILD_SPLITS": self.root / "manifests" / "split_manifest.json",
-            "P03_FIT_PREPROCESSING": self.root / "manifests" / "preprocessing_manifest.json",
-            "P15_VALIDATE_OUTPUTS": self.root / "manifests" / "validation_report.json",
-            "P16_FINALIZE_UNIT": self.root / "status" / "unit_complete.json",
-            "P14_COMPUTE_METRICS": self.root / "metrics" / "results.parquet",
-        }
-        path = mapping.get(phase)
-        if path and path.exists():
-            return hashlib.sha256(path.read_bytes()).hexdigest()
-        return None
 
     def _phase_validate_freeze(self) -> None:
         if self.cfg.adapters.skip_freeze_validation:
@@ -232,6 +260,12 @@ class ConfirmatoryRunner:
         self.phase_mgr.save()
 
     def _build_unit_manifest(self, *, dry_run: bool) -> dict[str, Any]:
+        env_path = self.root / "manifests" / "environment_manifest.json"
+        env_ref = None
+        if env_path.exists():
+            env_ref = artifact_record(self.root, "manifests/environment_manifest.json")
+        elif self._env_artifact is not None:
+            env_ref = self._env_artifact
         return {
             "unit_id": self.uid,
             "protocol_version": self.validation.get("protocol_version") if self.validation else None,
@@ -246,6 +280,8 @@ class ConfirmatoryRunner:
             "expected_final_cells": expected_final_cells(),
             "phase_status_path": str(self.root / "status" / "unit_status.json"),
             "dry_run_plan_path": str(self.root / "manifests" / "dry_run_plan.json"),
+            "environment_manifest": env_ref,
+            "finalization_hash_rule": FINALIZATION_HASH_RULE,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "scientific": self.cfg.adapters.scientific,
             "mark": self.cfg.adapters.mark,

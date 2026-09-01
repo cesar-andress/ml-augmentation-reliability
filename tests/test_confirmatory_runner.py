@@ -79,7 +79,7 @@ def test_pre_run_accepts_frozen_dataset_44():
     assert v["freeze_commit"] == FREEZE_COMMIT
 
 
-def test_dry_run_zero_model_cuda_dataset_download():
+def test_dry_run_zero_model_cuda_dataset_download(tmp_path):
     calls = {"openml": 0, "cuda": 0, "xgb": 0}
 
     def block_openml(*a, **k):
@@ -88,8 +88,9 @@ def test_dry_run_zero_model_cuda_dataset_download():
 
     with mock.patch("openml.datasets.get_dataset", side_effect=block_openml):
         with mock.patch("torch.cuda.is_available", side_effect=lambda: (_ for _ in ()).throw(AssertionError("CUDA forbidden"))):
+            unit = tmp_path / "d44_r0_f1"
             cfg = ConfirmatoryRunConfig(
-                repo_root=ROOT, dataset_id=44, repeat=0, fold=0, dry_run=True
+                repo_root=ROOT, dataset_id=44, repeat=0, fold=1, dry_run=True, unit_dir=unit
             )
             runner = ConfirmatoryRunner(cfg)
             out = runner.run_dry()
@@ -178,7 +179,7 @@ def test_conflicting_complete_output_aborts(tmp_path):
 def test_failed_only_rerun(tmp_path):
     status = tmp_path / "status.json"
     cfg_hash = compute_config_hash({"x": 1})
-    mgr = PhaseStateManager(status, config_hash=cfg_hash)
+    mgr = PhaseStateManager(status, config_hash=cfg_hash, unit_root=tmp_path)
     mgr.fail_phase("P02_BUILD_SPLITS", exception="boom")
     assert mgr.should_run_phase(
         "P02_BUILD_SPLITS",
@@ -186,9 +187,10 @@ def test_failed_only_rerun(tmp_path):
         force_rerun_failed=True,
         input_hashes={"config_hash": cfg_hash},
     )
-    mgr.complete_phase("P01_LOAD_DATASET", output_hashes={"checksum": "x"})
+    # P00 has no required disk outputs — COMPLETE reuse without files is valid
+    mgr.complete_phase("P00_VALIDATE_FREEZE", output_hashes={"checksum": "x"}, output_artifacts=[])
     assert not mgr.should_run_phase(
-        "P01_LOAD_DATASET",
+        "P00_VALIDATE_FREEZE",
         resume=True,
         force_rerun_failed=True,
         input_hashes={"config_hash": cfg_hash},
@@ -198,21 +200,12 @@ def test_failed_only_rerun(tmp_path):
 
 def test_dry_run_scientific_status_planned(tmp_path):
     unit = tmp_path / "units" / unit_id(dataset_id=44, repeat=0, fold=0)
-    with mock.patch.object(ConfirmatoryRunner, "_ensure_dirs", lambda self: None):
-        cfg = ConfirmatoryRunConfig(
-            repo_root=ROOT, dataset_id=44, repeat=0, fold=0, dry_run=True
-        )
-        runner = ConfirmatoryRunner(cfg)
-        runner.root = unit
-        runner.root.mkdir(parents=True, exist_ok=True)
-        (runner.root / "logs").mkdir(exist_ok=True)
-        (runner.root / "status").mkdir(exist_ok=True)
-        (runner.root / "manifests").mkdir(exist_ok=True)
-        runner.phase_mgr = PhaseStateManager(
-            runner.root / "status" / "unit_status.json",
-            config_hash=runner._config_hash,
-        )
-        out = runner.run_dry()
+    unit.mkdir(parents=True, exist_ok=True)
+    cfg = ConfirmatoryRunConfig(
+        repo_root=ROOT, dataset_id=44, repeat=0, fold=0, dry_run=True, unit_dir=unit
+    )
+    runner = ConfirmatoryRunner(cfg)
+    out = runner.run_dry()
     assert out["plan"]["scientific_status"] == "CONFIRMATORY_PLANNED_NOT_EXECUTED"
 
 
@@ -230,9 +223,10 @@ def test_dry_run_plan_content():
     assert plan["expected_final_cell_count"] == 18
 
 
-def test_manifest_traceability_after_dry_run():
+def test_manifest_traceability_after_dry_run(tmp_path):
+    unit = tmp_path / "d44_r0_f1"
     cfg = ConfirmatoryRunConfig(
-        repo_root=ROOT, dataset_id=44, repeat=0, fold=0, dry_run=True
+        repo_root=ROOT, dataset_id=44, repeat=0, fold=1, dry_run=True, unit_dir=unit
     )
     runner = ConfirmatoryRunner(cfg)
     out = runner.run_dry()
@@ -252,7 +246,8 @@ def test_confirmatory_runner_rejects_v1_2_protocol():
         validate_confirmatory_protocol_start(repo_root=ROOT, protocol_version="1.2")
 
 
-def test_dry_run_cli_integration():
+def test_dry_run_cli_integration(tmp_path, monkeypatch):
+    # Use fold 1 dry-run path — never clobber completed d44_r0_f0
     proc = subprocess.run(
         [
             sys.executable,
@@ -262,16 +257,18 @@ def test_dry_run_cli_integration():
             "--repeat",
             "0",
             "--fold",
-            "0",
+            "1",
             "--dry-run",
         ],
         capture_output=True,
         text=True,
-        cwd=ROOT,
+        cwd=str(ROOT),
     )
     assert proc.returncode == 0, proc.stderr
-    plan_path = ROOT / "results/confirmatory/units/d44_r0_f0/manifests/dry_run_plan.json"
+    plan_path = ROOT / "results/confirmatory/units/d44_r0_f1/manifests/dry_run_plan.json"
     assert plan_path.exists()
     plan = json.loads(plan_path.read_text())
+    assert plan["fold"] == 1
+    assert plan["scientific_status"] == "CONFIRMATORY_PLANNED_NOT_EXECUTED"
     assert plan["expected_final_cell_count"] == 18
     assert plan["hpo"]["standard_candidates"] == 20

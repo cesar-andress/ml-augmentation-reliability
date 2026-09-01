@@ -60,8 +60,11 @@ def _toy_adapters():
 
 
 def _run_toy(tmp_path: Path, *, clean: bool = True, **kwargs) -> ConfirmatoryRunner:
-    # Isolate unit under tmp by redirecting root after init
+    # Isolate unit under tmp by unit_dir — never touch real confirmatory units
     adapters = _toy_adapters()
+    unit = tmp_path / "d-1_r0_f0"
+    if clean and unit.exists():
+        shutil.rmtree(unit)
     cfg = ConfirmatoryRunConfig(
         repo_root=ROOT,
         dataset_id=-1,
@@ -69,20 +72,10 @@ def _run_toy(tmp_path: Path, *, clean: bool = True, **kwargs) -> ConfirmatoryRun
         fold=0,
         dry_run=False,
         adapters=adapters,
+        unit_dir=unit,
         **kwargs,
     )
-    runner = ConfirmatoryRunner(cfg)
-    unit = tmp_path / "d-1_r0_f0"
-    if clean and unit.exists():
-        shutil.rmtree(unit)
-    unit.mkdir(parents=True, exist_ok=True)
-    runner.root = unit
-    runner.uid = "d-1_r0_f0"
-    runner._ensure_dirs()
-    from src.experiment.phase_state import PhaseStateManager
-
-    runner.phase_mgr = PhaseStateManager(unit / "status" / "unit_status.json", config_hash=runner._config_hash)
-    return runner
+    return ConfirmatoryRunner(cfg)
 
 
 def test_shared_repair_cell_and_row_fractions_deterministic():
@@ -111,10 +104,10 @@ def test_full_live_toy_orchestration_18_cells(tmp_path):
     assert set(df["arm"]) >= {"A0", "A1", "A2", "A3", "A0+"}
     assert (df["learner"] == "xgboost").sum() == 5
     assert (df["learner"] == "tabpfn").sum() == 4
-    # no early TEST: all cells unlocked
-    for p in (runner.root / "manifests" / "cells").glob("*.json"):
-        cell = json.loads(p.read_text())
-        assert cell.get("test_unlocked_at")
+    # no early TEST: unlock recorded on predictions
+    for p in (runner.root / "predictions").rglob("test.json"):
+        payload = json.loads(p.read_text())
+        assert payload.get("test_unlocked_at")
 
 
 def test_resume_no_complete_rerun_and_conflict(tmp_path):
@@ -180,14 +173,9 @@ def test_wrong_checksum_aborts(tmp_path):
     adapters = _toy_adapters()
     adapters.expected_checksum = "WRONG"
     cfg = ConfirmatoryRunConfig(
-        repo_root=ROOT, dataset_id=-1, repeat=0, fold=0, adapters=adapters
+        repo_root=ROOT, dataset_id=-1, repeat=0, fold=0, adapters=adapters, unit_dir=tmp_path / "u"
     )
     runner = ConfirmatoryRunner(cfg)
-    runner.root = tmp_path / "u"
-    runner._ensure_dirs()
-    from src.experiment.phase_state import PhaseStateManager
-
-    runner.phase_mgr = PhaseStateManager(runner.root / "status" / "unit_status.json", config_hash=runner._config_hash)
     with pytest.raises(AssertionError, match="checksum"):
         runner.run_live()
 
