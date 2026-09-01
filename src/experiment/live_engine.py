@@ -313,7 +313,16 @@ class LivePhaseEngine:
             bundle = load_frozen_openml_raw(
                 int(self.ctx.dataset_id),
                 expected_raw_checksum=expected_checksum,
+                expected_canonical_content_sha256=(
+                    self.ctx.validation.get("expected_canonical_content_sha256")
+                    if self.ctx.validation
+                    else None
+                ),
                 expected_version=expected_version,
+                expected_name=expected_name,
+                expected_target_name=(
+                    self.ctx.validation.get("expected_target_name") if self.ctx.validation else None
+                ),
                 repo_root=self.ctx.repo_root,
             )
             retrieval_source = "frozen_parquet_cache_or_openml"
@@ -342,8 +351,11 @@ class LivePhaseEngine:
                 "dataset_version": bundle.version,
                 "dataset_name": bundle.name,
                 "target": y_meta,
+                "target_name": bundle.target_name,
                 "raw_checksum": bundle.checksum,
-                "checksum_algorithm": "sha256(X.parquet_bytes||y.parquet_bytes)",
+                "legacy_frozen_parquet_sha256": bundle.checksum,
+                "canonical_content_sha256": bundle.canonical_content_sha256,
+                "checksum_algorithm": "legacy:sha256(X.parquet_bytes||y.parquet_bytes); authoritative:canonical_content_sha256_v1",
                 "n_rows": int(len(bundle.X)),
                 "n_features": int(bundle.X.shape[1]),
                 "class_counts": class_counts,

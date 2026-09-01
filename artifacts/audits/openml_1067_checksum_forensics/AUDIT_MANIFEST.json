@@ -1,0 +1,22 @@
+{
+  "audit_id": "openml_1067_checksum_forensics",
+  "created_utc": "2026-09-01T19:50:00+00:00",
+  "frozen_expected_raw_checksum": "6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730",
+  "current_on_disk_raw_checksum": "842835c7f1922a9fa05ffa8b059eed9230f993034a8ca429371ef7028bf54951",
+  "preserved_evidence": {
+    "preserved_current_ml/": "read-only copy of data/raw/openml/1067/ at audit start"
+  },
+  "artifacts": [
+    "forensic_report_part1.json",
+    "serialization_tests.json",
+    "other_datasets_checksum_risk.json",
+    "root_cause_analysis.json",
+    "AUDIT_MANIFEST.json"
+  ],
+  "git_tracked_at_fe37655": {
+    "data/raw/openml/1067/meta.json": "present",
+    "data/raw/openml/1067/raw_checksum.sha256": "6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730",
+    "X.parquet": "NOT in git",
+    "y.parquet": "NOT in git"
+  }
+}

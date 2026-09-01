@@ -246,28 +246,25 @@ def test_confirmatory_runner_rejects_v1_2_protocol():
         validate_confirmatory_protocol_start(repo_root=ROOT, protocol_version="1.2")
 
 
-def test_dry_run_cli_integration(tmp_path, monkeypatch):
-    # Use fold 1 dry-run path — never clobber completed d44_r0_f0
-    proc = subprocess.run(
-        [
-            sys.executable,
-            str(RUNNER),
-            "--dataset-id",
-            "44",
-            "--repeat",
-            "0",
-            "--fold",
-            "1",
-            "--dry-run",
-        ],
-        capture_output=True,
-        text=True,
-        cwd=str(ROOT),
+def test_dry_run_cli_integration(tmp_path):
+    # Isolated unit dir — never touch completed confirmatory units under results/
+    from src.experiment.confirmatory_runner import ConfirmatoryRunConfig, ConfirmatoryRunner
+
+    unit = tmp_path / "d44_r0_f1"
+    cfg = ConfirmatoryRunConfig(
+        repo_root=ROOT,
+        dataset_id=44,
+        repeat=0,
+        fold=1,
+        dry_run=True,
+        unit_dir=unit,
     )
-    assert proc.returncode == 0, proc.stderr
-    plan_path = ROOT / "results/confirmatory/units/d44_r0_f1/manifests/dry_run_plan.json"
+    runner = ConfirmatoryRunner(cfg)
+    result = runner.run()
+    plan_path = unit / "manifests" / "dry_run_plan.json"
     assert plan_path.exists()
     plan = json.loads(plan_path.read_text())
+    assert result["mode"] == "dry_run"
     assert plan["fold"] == 1
     assert plan["scientific_status"] == "CONFIRMATORY_PLANNED_NOT_EXECUTED"
     assert plan["expected_final_cell_count"] == 18

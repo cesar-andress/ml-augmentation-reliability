@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,8 @@ from typing import Any
 import numpy as np
 import openml
 import pandas as pd
+
+from src.data.canonical_content_hash import canonical_content_sha256
 
 
 @dataclass
@@ -21,6 +24,8 @@ class DatasetBundle:
     y: pd.Series
     checksum: str
     description: str
+    canonical_content_sha256: str = ""
+    target_name: str = ""
 
 
 def _frame_checksum(X: pd.DataFrame, y: pd.Series) -> str:
@@ -30,16 +35,39 @@ def _frame_checksum(X: pd.DataFrame, y: pd.Series) -> str:
     return h.hexdigest()
 
 
-def parquet_bytes_checksum(x_path: str | Path, y_path: str | Path) -> str:
-    """Freeze-compatible checksum: SHA256(X.parquet bytes || y.parquet bytes)."""
-    from pathlib import Path
-
+def legacy_frozen_parquet_sha256(x_path: str | Path, y_path: str | Path) -> str:
+    """Legacy freeze checksum: SHA256(X.parquet bytes || y.parquet bytes)."""
     x_path = Path(x_path)
     y_path = Path(y_path)
     h = hashlib.sha256()
     h.update(x_path.read_bytes())
     h.update(y_path.read_bytes())
     return h.hexdigest()
+
+
+# Backward-compatible alias used throughout the codebase.
+parquet_bytes_checksum = legacy_frozen_parquet_sha256
+
+
+def fetch_openml_dataframe(openml_id: int) -> tuple[pd.DataFrame, pd.Series, str, Any, str, str]:
+    """Download OpenML dataset without preprocessing-oriented dtype coercion."""
+    ds = openml.datasets.get_dataset(openml_id, download_data=True)
+    X, y, _categorical_indicator, attribute_names = ds.get_data(
+        target=ds.default_target_attribute, dataset_format="dataframe"
+    )
+    if not isinstance(X, pd.DataFrame):
+        X = pd.DataFrame(X, columns=attribute_names)
+    y = pd.Series(y).reset_index(drop=True)
+    X = X.reset_index(drop=True)
+    description = (ds.description or "")[:2000]
+    return (
+        X,
+        y,
+        ds.name,
+        getattr(ds, "version", None),
+        ds.default_target_attribute,
+        description,
+    )
 
 
 def cache_raw_openml(
@@ -49,11 +77,12 @@ def cache_raw_openml(
     meta: dict[str, Any] | None = None,
     *,
     raw_root: str | Path | None = None,
+    target_name: str = "y",
 ) -> str:
-    """Persist raw parquet cache exactly as Protocol v1.2 freeze did."""
-    from pathlib import Path
-    import json
+    """Persist raw parquet cache exactly as Protocol v1.2 freeze did.
 
+    Raw cache preserves OpenML-native dtypes (e.g. bool targets stay bool).
+    """
     raw_root = Path(raw_root) if raw_root else Path("data/raw/openml")
     d = raw_root / str(openml_id)
     d.mkdir(parents=True, exist_ok=True)
@@ -63,31 +92,27 @@ def cache_raw_openml(
     pd.DataFrame({"y": y}).to_parquet(y_path)
     if meta is not None:
         (d / "meta.json").write_text(json.dumps(meta, indent=2, default=str))
-    digest = parquet_bytes_checksum(x_path, y_path)
+    digest = legacy_frozen_parquet_sha256(x_path, y_path)
     (d / "raw_checksum.sha256").write_text(digest + "\n")
+    canonical = canonical_content_sha256(X, y, target_name=target_name)
+    (d / "canonical_content_sha256").write_text(canonical + "\n")
     return digest
 
 
 def load_openml_raw(openml_id: int) -> DatasetBundle:
-    ds = openml.datasets.get_dataset(openml_id, download_data=True)
-    X, y, categorical_indicator, attribute_names = ds.get_data(
-        target=ds.default_target_attribute, dataset_format="dataframe"
-    )
-    if not isinstance(X, pd.DataFrame):
-        X = pd.DataFrame(X, columns=attribute_names)
-    y = pd.Series(y)
-    # Map binary labels to {0,1} with minority as positive if needed later handled by caller.
-    # Keep original categories but ensure two classes.
-    y = y.astype("category")
-    desc = (ds.description or "")[:2000]
+    X, y_raw, name, version, target_name, desc = fetch_openml_dataframe(openml_id)
+    # Screening path may use category semantics for binarization checks.
+    y = y_raw.astype("category")
     return DatasetBundle(
         openml_id=int(openml_id),
-        name=ds.name,
-        version=getattr(ds, "version", None),
-        X=X.reset_index(drop=True),
-        y=y.reset_index(drop=True),
+        name=name,
+        version=version,
+        X=X,
+        y=y,
         checksum=_frame_checksum(X, y),
         description=desc,
+        canonical_content_sha256=canonical_content_sha256(X, y_raw, target_name=target_name),
+        target_name=target_name,
     )
 
 
@@ -95,70 +120,103 @@ def load_frozen_openml_raw(
     openml_id: int,
     *,
     expected_raw_checksum: str | None = None,
+    expected_canonical_content_sha256: str | None = None,
     expected_version: int | None = None,
+    expected_name: str | None = None,
+    expected_target_name: str | None = None,
     raw_root: str | Path | None = None,
     repo_root: str | Path | None = None,
+    validate_identity: bool = True,
 ) -> DatasetBundle:
-    """Load confirmatory dataset using freeze-compatible parquet-byte checksum.
-
-    Prefer existing data/raw/openml/<id>/{X,y}.parquet when present.
-    Otherwise download, cache with the freeze writer, and verify checksum.
-    """
-    from pathlib import Path
-
+    """Load confirmatory dataset with legacy byte + canonical content identity checks."""
     repo_root = Path(repo_root) if repo_root else Path(".")
     raw_root = Path(raw_root) if raw_root else repo_root / "data" / "raw" / "openml"
     d = raw_root / str(openml_id)
     x_path = d / "X.parquet"
     y_path = d / "y.parquet"
 
-    retrieval = "cache"
     if x_path.exists() and y_path.exists():
         X = pd.read_parquet(x_path)
         y = pd.read_parquet(y_path)["y"]
-        digest = parquet_bytes_checksum(x_path, y_path)
-        # recover metadata
-        import json
-
+        legacy_digest = legacy_frozen_parquet_sha256(x_path, y_path)
         meta_path = d / "meta.json"
         meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}
         name = meta.get("name")
         version = meta.get("version")
         description = meta.get("description", "")
+        target_name = meta.get("target") or meta.get("default_target_attribute") or "y"
         if name is None or version is None:
             ds = openml.datasets.get_dataset(openml_id, download_data=False)
             name = name or ds.name
             version = version if version is not None else getattr(ds, "version", None)
             description = description or (ds.description or "")[:2000]
+            if target_name in {"", "from_openml", "y"}:
+                target_name = ds.default_target_attribute
     else:
-        retrieval = "openml_download_then_cache"
-        bundle = load_openml_raw(openml_id)
+        X, y, name, version, target_name, description = fetch_openml_dataframe(openml_id)
         meta = {
             "openml_id": openml_id,
-            "name": bundle.name,
-            "version": bundle.version,
-            "description": bundle.description,
-            "default_target_attribute": "from_openml",
+            "name": name,
+            "version": version,
+            "description": description,
+            "target": target_name,
+            "retrieval_timestamp_utc": pd.Timestamp.utcnow().isoformat(),
         }
-        digest = cache_raw_openml(openml_id, bundle.X, bundle.y, meta, raw_root=raw_root)
-        X, y = bundle.X, bundle.y
-        name, version, description = bundle.name, bundle.version, bundle.description
-
-    if expected_raw_checksum and digest != expected_raw_checksum:
-        raise AssertionError(
-            f"dataset raw_checksum mismatch (parquet-bytes): got {digest}, expected {expected_raw_checksum}"
+        legacy_digest = cache_raw_openml(
+            openml_id,
+            X,
+            y,
+            meta,
+            raw_root=raw_root,
+            target_name=target_name,
         )
+
+    X = X.reset_index(drop=True)
+    y = pd.Series(y).reset_index(drop=True)
+    canonical = canonical_content_sha256(X, y, target_name=target_name)
+
     if expected_version is not None and int(version) != int(expected_version):
         raise AssertionError(f"dataset version mismatch: got {version}, expected {expected_version}")
+    if expected_name is not None and str(name) != str(expected_name):
+        raise AssertionError(f"dataset name mismatch: got {name}, expected {expected_name}")
+    if expected_target_name is not None and str(target_name) != str(expected_target_name):
+        raise AssertionError(f"target name mismatch: got {target_name}, expected {expected_target_name}")
+
+    if expected_raw_checksum and legacy_digest != expected_raw_checksum:
+        raise AssertionError(
+            "dataset legacy_frozen_parquet_sha256 mismatch (parquet-bytes): "
+            f"got {legacy_digest}, expected {expected_raw_checksum}"
+        )
+    if expected_canonical_content_sha256 and canonical != expected_canonical_content_sha256:
+        raise AssertionError(
+            "dataset canonical_content_sha256 mismatch: "
+            f"got {canonical}, expected {expected_canonical_content_sha256}"
+        )
+
+    if validate_identity and repo_root is not None:
+        from src.data.dataset_content_identity import validate_dataset_content_identity
+
+        validate_dataset_content_identity(
+            repo_root=repo_root,
+            openml_id=int(openml_id),
+            openml_version=int(version),
+            dataset_name=str(name),
+            target_name=str(target_name),
+            X=X,
+            y=y,
+            legacy_parquet_sha256=legacy_digest,
+        )
 
     return DatasetBundle(
         openml_id=int(openml_id),
         name=str(name),
         version=version,
-        X=X.reset_index(drop=True),
-        y=pd.Series(y).reset_index(drop=True).astype("category"),
-        checksum=digest,
+        X=X,
+        y=y,
+        checksum=legacy_digest,
         description=str(description),
+        canonical_content_sha256=canonical,
+        target_name=str(target_name),
     )
 
 
@@ -269,8 +327,6 @@ def screen_candidates(
             }
             cand_rows.append(row)
             suspects = suspect_semantic_issues(bundle.name, bundle.description)
-            # Always include objective-pass datasets for human semantic review;
-            # also include any with keyword hits even if objective fail.
             if elig["pass_objective"] or suspects:
                 review_rows.append(
                     {

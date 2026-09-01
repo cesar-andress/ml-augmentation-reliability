@@ -1,0 +1,192 @@
+{
+  "current_cached": {
+    "parquet_bytes": "842835c7f1922a9fa05ffa8b059eed9230f993034a8ca429371ef7028bf54951",
+    "frame_checksum": "3a161f2693581603a969e3a75bc3b0e9a5c5a263f9f70c7d624034811273d911",
+    "canonical_content_sha256": "ff59d4f5c038b8b69cff2fc75e762feecedc1dc980f3b7720b30cfcbcc112b9c",
+    "n_rows": 2109,
+    "n_cols": 21,
+    "columns": [
+      "loc",
+      "v(g)",
+      "ev(g)",
+      "iv(g)",
+      "n",
+      "v",
+      "l",
+      "d",
+      "i",
+      "e",
+      "b",
+      "t",
+      "lOCode",
+      "lOComment",
+      "lOBlank",
+      "locCodeAndComment",
+      "uniq_Op",
+      "uniq_Opnd",
+      "total_Op",
+      "total_Opnd",
+      "branchCount"
+    ],
+    "dtypes": {
+      "loc": "float64",
+      "v(g)": "float64",
+      "ev(g)": "float64",
+      "iv(g)": "float64",
+      "n": "float64",
+      "v": "float64",
+      "l": "float64",
+      "d": "float64",
+      "i": "float64",
+      "e": "float64",
+      "b": "float64",
+      "t": "float64",
+      "lOCode": "float64",
+      "lOComment": "uint8",
+      "lOBlank": "uint8",
+      "locCodeAndComment": "uint8",
+      "uniq_Op": "float64",
+      "uniq_Opnd": "float64",
+      "total_Op": "float64",
+      "total_Opnd": "float64",
+      "branchCount": "float64"
+    },
+    "y_categories": [
+      false,
+      true
+    ],
+    "y_counts": {
+      "False": 1783,
+      "True": 326
+    },
+    "missing_X": 0,
+    "missing_y": 0
+  },
+  "openml_live": {
+    "openml_id": 1067,
+    "version": 1,
+    "name": "kc1",
+    "default_target_attribute": "defects",
+    "n_rows": 2109,
+    "n_cols": 21,
+    "columns": [
+      "loc",
+      "v(g)",
+      "ev(g)",
+      "iv(g)",
+      "n",
+      "v",
+      "l",
+      "d",
+      "i",
+      "e",
+      "b",
+      "t",
+      "lOCode",
+      "lOComment",
+      "lOBlank",
+      "locCodeAndComment",
+      "uniq_Op",
+      "uniq_Opnd",
+      "total_Op",
+      "total_Opnd",
+      "branchCount"
+    ],
+    "dtypes": {
+      "loc": "float64",
+      "v(g)": "float64",
+      "ev(g)": "float64",
+      "iv(g)": "float64",
+      "n": "float64",
+      "v": "float64",
+      "l": "float64",
+      "d": "float64",
+      "i": "float64",
+      "e": "float64",
+      "b": "float64",
+      "t": "float64",
+      "lOCode": "float64",
+      "lOComment": "uint8",
+      "lOBlank": "uint8",
+      "locCodeAndComment": "uint8",
+      "uniq_Op": "float64",
+      "uniq_Opnd": "float64",
+      "total_Op": "float64",
+      "total_Opnd": "float64",
+      "branchCount": "float64"
+    },
+    "y_categories": [
+      false,
+      true
+    ],
+    "y_counts": {
+      "False": 1783,
+      "True": 326
+    },
+    "missing_X": 0,
+    "missing_y": 0,
+    "frame_checksum": "3a161f2693581603a969e3a75bc3b0e9a5c5a263f9f70c7d624034811273d911",
+    "canonical_content_sha256": "ff59d4f5c038b8b69cff2fc75e762feecedc1dc980f3b7720b30cfcbcc112b9c",
+    "qualities_NumberOfInstances": 2109.0,
+    "qualities_NumberOfFeatures": 22.0
+  },
+  "comparison_cached_vs_live": {
+    "ROWS_IDENTICAL": true,
+    "COLUMN_ORDER_IDENTICAL": true,
+    "COLUMN_SET_IDENTICAL": true,
+    "VALUES_IDENTICAL": true,
+    "TARGET_IDENTICAL": true,
+    "NULL_PATTERN_IDENTICAL": true,
+    "DTYPES_IDENTICAL": true,
+    "INDEX_IDENTICAL": true,
+    "frame_checksum_match": true,
+    "canonical_match": true
+  },
+  "live_reserialize_default": "6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730",
+  "target_defects": {
+    "n_cols": 21,
+    "columns": [
+      "loc",
+      "v(g)",
+      "ev(g)",
+      "iv(g)",
+      "n",
+      "v",
+      "l",
+      "d",
+      "i",
+      "e",
+      "b",
+      "t",
+      "lOCode",
+      "lOComment",
+      "lOBlank",
+      "locCodeAndComment",
+      "uniq_Op",
+      "uniq_Opnd",
+      "total_Op",
+      "total_Opnd",
+      "branchCount"
+    ],
+    "parquet_bytes": "6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730",
+    "canonical": "ff59d4f5c038b8b69cff2fc75e762feecedc1dc980f3b7720b30cfcbcc112b9c",
+    "frame": "3a161f2693581603a969e3a75bc3b0e9a5c5a263f9f70c7d624034811273d911"
+  },
+  "target_problems": {
+    "error": "list index out of range"
+  },
+  "parquet_metadata": {
+    "current": {
+      "created_by": "{\"index_columns\": [{\"kind\": \"range\", \"name\": null, \"start\": 0, \"stop\": 2109, \"step\": 1}], \"column_indexes\": [{\"name\": null, \"field_name\": null, \"pandas_type\": \"unicode\", \"numpy_type\": \"str\", \"metadata",
+      "num_rows": 2109,
+      "num_columns": 21,
+      "format_version": "2.6"
+    },
+    "y_current": {
+      "created_by": "{\"index_columns\": [{\"kind\": \"range\", \"name\": null, \"start\": 0, \"stop\": 2109, \"step\": 1}], \"column_indexes\": [{\"name\": null, \"field_name\": null, \"pandas_type\": \"unicode\", \"numpy_type\": \"str\", \"metadata",
+      "num_rows": 2109,
+      "num_columns": 1,
+      "format_version": "2.6"
+    }
+  }
+}

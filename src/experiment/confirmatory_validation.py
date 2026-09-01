@@ -82,6 +82,15 @@ def validate_pre_run(
 
     ds_row = load_frozen_dataset_row(repo_root, dataset_id)
 
+    identity_row: dict[str, str] | None = None
+    identity_path = repo_root / "artifacts/manifests/dataset_content_identity_v1.csv"
+    if identity_path.exists():
+        with identity_path.open(encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                if int(row["resolved_openml_id"]) == dataset_id:
+                    identity_row = row
+                    break
+
     return {
         **proto,
         "freeze_tag": FREEZE_TAG,
@@ -92,6 +101,11 @@ def validate_pre_run(
         "dataset_name": ds_row["dataset_name"],
         "dataset_version": int(ds_row["openml_version"]),
         "expected_raw_checksum": ds_row["raw_checksum"],
+        "expected_legacy_frozen_parquet_sha256": ds_row["raw_checksum"],
+        "expected_canonical_content_sha256": (
+            identity_row["canonical_content_sha256"] if identity_row else None
+        ),
+        "expected_target_name": identity_row.get("target_name") if identity_row else None,
         "repeat": repeat,
         "fold": fold,
     }

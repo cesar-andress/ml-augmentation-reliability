@@ -1,0 +1,24 @@
+{
+  "primary_classification": "SERIALIZATION_ONLY",
+  "contributing_causes": [
+    "CACHE_METADATA_DRIFT",
+    "FROZEN_CHECKSUM_METHOD_DEFECT"
+  ],
+  "root_cause_summary": "Frozen checksum is SHA256(X.parquet bytes || y.parquet bytes) produced by freeze_dataset_cohort_v1_2.cache_raw writing raw y (bool for kc1). Confirmatory download path load_openml_raw casts y to category before cache_raw_openml, producing different y.parquet bytes (842835c7...) despite identical semantic content. On-disk 1067 cache was written by loader path during failed campaign; validation reads existing parquets without rewrite.",
+  "scientific_materiality": false,
+  "openml_version_drift": false,
+  "data_content_identical": true,
+  "row_order_identical": true,
+  "reproducibility": {
+    "freeze_style_from_live_openml": "6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730",
+    "loader_style_from_live_openml": "842835c7f1922a9fa05ffa8b059eed9230f993034a8ca429371ef7028bf54951",
+    "canonical_content_sha256_both": "ff59d4f5c038b8b69cff2fc75e762feecedc1dc980f3b7720b30cfcbcc112b9c",
+    "frame_checksum_both": "3a161f2693581603a969e3a75bc3b0e9a5c5a263f9f70c7d624034811273d911"
+  },
+  "y_parquet_size_bytes": {
+    "on_disk_loader_style": 1667,
+    "freeze_style_reserialize": 1509
+  },
+  "other_datasets_loader_style_risk": "1067-only for bool y; category targets (44,1489,46921 tested) produce identical freeze/loader byte checksums",
+  "recommended_remediation": "Replace byte-level raw checksum validation with canonical-content identity check for ALL frozen datasets; re-materialize 1067 parquets using freeze-identical writer after canonical hash verification"
+}

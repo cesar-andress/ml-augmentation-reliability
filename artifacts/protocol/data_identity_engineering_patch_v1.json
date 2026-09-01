@@ -1,0 +1,16 @@
+{
+  "patch_type": "POST_FREEZE_ENGINEERING_PROVENANCE_FIX",
+  "scientific_protocol_changed": false,
+  "scientific_data_content_changed": false,
+  "reason": "Frozen raw identity used Parquet byte hashes. OpenML 1067 boolean target was reserialized as categorical by the runtime loader, producing different file bytes with identical scientific content.",
+  "forensic_audit_path": "artifacts/audits/openml_1067_checksum_forensics/",
+  "created_utc": "2026-09-01T20:30:14Z",
+  "git_head_at_patch": "1adbf6575e4407cd2ce3fd674a58ba3932041a4b",
+  "active_protocol_tag": "protocol-v1.2.1-freeze",
+  "active_protocol_version": "1.2.1",
+  "legacy_frozen_parquet_sha256_1067": "6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730",
+  "forensic_adhoc_canonical_content_sha256_1067": "ff59d4f5c038b8b69cff2fc75e762feecedc1dc980f3b7720b30cfcbcc112b9c",
+  "canonical_content_sha256_v1_1067": "3a3ab7d9a8ce3627e60620f018b06b7955b33cf36fb6e58912116f296c4fbb16",
+  "identity_manifest": "artifacts/manifests/dataset_content_identity_v1.csv",
+  "note": "Dataset 44 confirmatory results existed before this engineering patch. No scientific metric informed the patch."
+}

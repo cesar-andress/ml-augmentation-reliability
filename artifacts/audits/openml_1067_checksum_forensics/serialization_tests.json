@@ -1,0 +1,102 @@
+{
+  "on_disk": "842835c7f1922a9fa05ffa8b059eed9230f993034a8ca429371ef7028bf54951",
+  "read_current_rewrite_default": "6fecfff679a8168cdf32dd8a3a01a59ec1e2cbd0d8405141a971599450c5c730",
+  "sizes": {
+    "on_disk_X": 74970,
+    "on_disk_y": 1667,
+    "reserialize_X": 74970,
+    "reserialize_y": 1509
+  },
+  "versions": {
+    "pyarrow": "25.0.1",
+    "pandas": "3.0.5"
+  },
+  "variants": [
+    {
+      "engine": "pyarrow",
+      "y_fmt": "series_col",
+      "x_idx": true,
+      "checksum": "4a74bcc6204f68ee22f7b6ecdc95dbd0c22d6c3e22ba5a2d262d684f1331d6d6",
+      "match_frozen": false,
+      "match_got": false
+    },
+    {
+      "engine": "pyarrow",
+      "y_fmt": "series_col",
+      "x_idx": false,
+      "checksum": "04317f1719bdaba3c71eb25ab79bc44684ae58931408f821ba8b86e8a8427784",
+      "match_frozen": false,
+      "match_got": false
+    },
+    {
+      "engine": "pyarrow",
+      "y_fmt": "df_col",
+      "x_idx": true,
+      "checksum": "07a3b12bbc5e62930801fa3bbb83358a6b1438ebe2e8720e1da708d66764ba95",
+      "match_frozen": false,
+      "match_got": false
+    },
+    {
+      "engine": "pyarrow",
+      "y_fmt": "df_col",
+      "x_idx": false,
+      "checksum": "246e368922224d5e34d0f1ff1e4cb99d2a73b2c6741605545fa5533b7caba0c2",
+      "match_frozen": false,
+      "match_got": false
+    },
+    {
+      "engine": "pyarrow",
+      "y_fmt": "category",
+      "x_idx": true,
+      "checksum": "f9b1ef96bb7dc1098b04eb68edf693b99defa7b57eb6f96b4b21bc52a7713e30",
+      "match_frozen": false,
+      "match_got": false
+    },
+    {
+      "engine": "pyarrow",
+      "y_fmt": "category",
+      "x_idx": false,
+      "checksum": "2c29b4ed07c17b0ef3d1fa96a8c26b89814cf99bf36c24ad51235c1efc3c927f",
+      "match_frozen": false,
+      "match_got": false
+    },
+    {
+      "engine": "fastparquet",
+      "y_fmt": "series_col",
+      "x_idx": true,
+      "error": "`Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package."
+    },
+    {
+      "engine": "fastparquet",
+      "y_fmt": "series_col",
+      "x_idx": false,
+      "error": "`Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package."
+    },
+    {
+      "engine": "fastparquet",
+      "y_fmt": "df_col",
+      "x_idx": true,
+      "error": "`Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package."
+    },
+    {
+      "engine": "fastparquet",
+      "y_fmt": "df_col",
+      "x_idx": false,
+      "error": "`Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package."
+    },
+    {
+      "engine": "fastparquet",
+      "y_fmt": "category",
+      "x_idx": true,
+      "error": "`Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package."
+    },
+    {
+      "engine": "fastparquet",
+      "y_fmt": "category",
+      "x_idx": false,
+      "error": "`Import fastparquet` failed. fastparquet is required for parquet support. Use pip or conda to install the fastparquet package."
+    }
+  ],
+  "frozen_matches": [],
+  "got_matches": []
+}

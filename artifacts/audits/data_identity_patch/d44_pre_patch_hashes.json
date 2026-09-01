@@ -1,0 +1,42 @@
+{
+  "d44_r0_f0": {
+    "unit_complete.json": "5121abd80340917b3f98324472399d39636bfe055bb01e1fb338d9ea4022a7c0",
+    "results.parquet": "66a3ae11f56b296c5015a0500e973afd2b1fc5525e4060d3a9a9ff899a29303f"
+  },
+  "d44_r0_f1": {
+    "unit_complete.json": "9588e178c51adae39cf32a06fc52987d2a2a9b6d669b2a6263315ceee141f4e7",
+    "results.parquet": "06a214549dfa25c1a468097f5bb4144ef6927d479caecd9a733157a94ed72d40"
+  },
+  "d44_r0_f2": {
+    "unit_complete.json": "f6de22f9f88c831deb254c49ab40705dd6944e314bc10303a7480726d24bb784",
+    "results.parquet": "7c985c3d114fa20eb9b19a84c49933018553e3418e694871757ddd17a898a714"
+  },
+  "d44_r0_f3": {
+    "unit_complete.json": "407f51176c9fcb89da64e16e99086578e1ecd28862c51a8888cd3bd61b5e581c",
+    "results.parquet": "e6169a1ace6165ca3bde0f065396991d28987c7c67f5e52cdf560c904d369c3c"
+  },
+  "d44_r0_f4": {
+    "unit_complete.json": "80fee77225aebbf1e3f909efa45ab97d9a991e6f262b4be9ba5c4ec00a2284f9",
+    "results.parquet": "4b3913e9aacade83a36446fed768e130d20e5453373fe893845fb931ee21b8ee"
+  },
+  "d44_r1_f0": {
+    "unit_complete.json": "372c109ebce33da7fe87e194ea4d7f63e5a41f8f4313400e0c214b33dd6ffc2b",
+    "results.parquet": "7c300c5f9f483884c6452bdf3f95a9b07516343c0523cf01002c252b46d02bb2"
+  },
+  "d44_r1_f1": {
+    "unit_complete.json": "c0d4a8d0c5bc33c8b10052557a489afeab8ec6388036c93a2de2af70a42ba5bb",
+    "results.parquet": "3be740614089aaff3c721ffc63d13409f80f13bd3faf78151be36d6b3311bcba"
+  },
+  "d44_r1_f2": {
+    "unit_complete.json": "139028a072e99b173be277ce52b8802536317862b690bd5285d1f15db28ad687",
+    "results.parquet": "88345637b24e05ea02aa7f729555a20d56653c2c1b0aa537ac1abefc17ee16fd"
+  },
+  "d44_r1_f3": {
+    "unit_complete.json": "ba338e8f9510cf66d4e5408dbe8dbade0d115ac8f5620dd4fcc26bf8528ac28c",
+    "results.parquet": "a38dc4d47bb5b271eb82b1b62b72bc86f64f9bae72defd41a0f3ef171ff5c7ea"
+  },
+  "d44_r1_f4": {
+    "unit_complete.json": "f526344227620f8a402714cafe086dcf646ab8f887c4680f7ae9ac0389bda4d9",
+    "results.parquet": "bb0c8b1848e2af132120c334a50ddda871c1cb5fa536cd4d5fbe15fb0d5bacbe"
+  }
+}

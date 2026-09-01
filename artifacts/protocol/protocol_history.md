@@ -61,3 +61,14 @@ Canonical amendment: `artifacts/protocol/protocol_v1_2_1_amendment.yaml`
 Machine-readable configs: `configs/hpo_v1_2_1.yaml`, `configs/a3_protocol_v1_2_1.yaml`  
 Confirmatory freeze: `artifacts/manifests/confirmatory_freeze_v1_2_1.yaml`  
 Tag: `protocol-v1.2.1-freeze`
+
+## 2026-09-01T20:30:14Z — Post-freeze engineering data-identity patch (NOT v1.2.2)
+
+- Discovered after completion of dataset 44 confirmatory units and before any completed unit for dataset 1067 or later datasets
+- Root cause: frozen raw identity used Parquet byte hashes; OpenML 1067 boolean target was cached as categorical by the runtime loader, yielding different file bytes with identical scientific content
+- Forensic audit (`artifacts/audits/openml_1067_checksum_forensics/`) proved OpenML version, row order, values, and targets unchanged
+- Original frozen byte checksums preserved in `datasets_frozen_v1_2.csv` (immutable)
+- Added authoritative `canonical_content_sha256` v1 identity manifest: `artifacts/manifests/dataset_content_identity_v1.csv`
+- Engineering record: `artifacts/protocol/data_identity_engineering_patch_v1.json`
+- **No scientific protocol version change**; tag `protocol-v1.2.1-freeze` unchanged
+- Dataset 44 confirmatory results existed before this patch; no scientific metric informed the fix
