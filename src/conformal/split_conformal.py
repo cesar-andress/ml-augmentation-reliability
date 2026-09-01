@@ -15,14 +15,27 @@ def conformity_score(p_hat_pos: np.ndarray, y: np.ndarray) -> np.ndarray:
 
 def conformal_quantile(scores_cal: np.ndarray, alpha: float = 0.10) -> float:
     """Marginal split-conformal quantile on CAL-B."""
+    qhat, _meta = conformal_quantile_with_meta(scores_cal, alpha=alpha)
+    return qhat
+
+
+def conformal_quantile_with_meta(scores_cal: np.ndarray, alpha: float = 0.10) -> tuple[float, dict]:
+    """Marginal split-conformal quantile plus order-statistic metadata."""
     scores = np.asarray(scores_cal, dtype=np.float64)
     n = len(scores)
     if n == 0:
         raise ValueError("empty CAL-B scores")
     # standard finite-sample correction: level = ceil((n+1)(1-alpha)) / n
-    level = np.ceil((n + 1) * (1.0 - alpha)) / n
-    level = min(level, 1.0)
-    return float(np.quantile(scores, level, method="higher"))
+    order_stat = int(np.ceil((n + 1) * (1.0 - alpha)))
+    level = min(order_stat / n, 1.0)
+    qhat = float(np.quantile(scores, level, method="higher"))
+    return qhat, {
+        "n_calibration": n,
+        "alpha": float(alpha),
+        "level": float(level),
+        "order_statistic_index": min(order_stat, n),
+        "score_checksum": float(np.sum(scores)),
+    }
 
 
 def prediction_sets(p_hat_pos: np.ndarray, qhat: float) -> list[set[int]]:

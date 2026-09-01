@@ -47,12 +47,35 @@ def shared_repair(
     X_train: pd.DataFrame,
     meta: PreprocessMeta,
 ) -> tuple[pd.DataFrame, float]:
-    """Snap categoricals, round integer-valued numerics, clip to TRAIN min/max."""
+    """Snap categoricals, round integer-valued numerics, clip to TRAIN min/max.
+
+    Returns (repaired_frame, row_repair_fraction).
+    """
+    X_out, row_frac, _cell_frac = shared_repair_with_cell_stats(X_syn, X_train, meta)
+    return X_out, row_frac
+
+
+def shared_repair_with_cell_stats(
+    X_syn: pd.DataFrame,
+    X_train: pd.DataFrame,
+    meta: PreprocessMeta,
+) -> tuple[pd.DataFrame, float, float]:
+    """Frozen repair with both row-level and cell-level fractions."""
     if len(X_syn) == 0:
-        return X_syn.copy(), 0.0
+        return X_syn.copy(), 0.0, 0.0
 
     X_out = X_syn.copy()
-    changed = np.zeros(len(X_out), dtype=bool)
+    changed_rows = np.zeros(len(X_out), dtype=bool)
+    cell_changed = 0
+    n_cells = 0
+
+    def _mark_cells(mask: np.ndarray) -> None:
+        nonlocal cell_changed, n_cells
+        mask = np.asarray(mask, dtype=bool)
+        n_cells += len(mask)
+        cell_changed += int(mask.sum())
+        if len(mask):
+            changed_rows[: len(mask)] |= mask
 
     # Categorical codes -> valid levels or sentinel is already a code; snap to {0..K-1, sentinel}
     for c in meta.categorical_cols:
@@ -60,42 +83,40 @@ def shared_repair(
         sentinel = meta.unknown_category_sentinel
         valid = set(range(k)) | {sentinel}
         col = X_out[c].to_numpy().astype(np.int64)
-        # snap invalid to sentinel
         bad = np.array([int(v) not in valid for v in col], dtype=bool)
         if bad.any():
             col = col.copy()
             col[bad] = sentinel
-            changed |= bad
             X_out[c] = col
-        # also round floats if any
+        _mark_cells(bad)
         rounded = np.rint(X_out[c].to_numpy()).astype(np.int64)
-        if not np.array_equal(rounded, X_out[c].to_numpy()):
-            changed |= rounded != X_out[c].to_numpy()
+        round_changed = rounded != X_out[c].to_numpy()
+        if round_changed.any():
             X_out[c] = rounded
+        _mark_cells(round_changed)
 
     for c in meta.numeric_cols:
         train_col = X_train[c].to_numpy(dtype=np.float64)
         lo, hi = float(np.min(train_col)), float(np.max(train_col))
         vals = X_out[c].to_numpy(dtype=np.float64).copy()
-        # integer-valued numeric features in TRAIN?
         is_int_valued = np.all(np.isclose(train_col, np.rint(train_col)))
         if is_int_valued:
             rounded = np.rint(vals)
-            changed |= ~np.isclose(rounded, vals)
+            _mark_cells(~np.isclose(rounded, vals))
             vals = rounded
         clipped = np.clip(vals, lo, hi)
-        changed |= ~np.isclose(clipped, vals)
+        _mark_cells(~np.isclose(clipped, vals))
         X_out[c] = clipped.astype(np.float64)
 
     for c in meta.missing_indicator_cols:
         vals = X_out[c].to_numpy(dtype=np.float64)
         snapped = np.clip(np.rint(vals), 0, 1).astype(np.int64)
-        changed |= snapped != np.rint(vals).astype(np.int64)
-        # also if outside {0,1}
+        _mark_cells(snapped != np.rint(vals).astype(np.int64))
         X_out[c] = snapped
 
-    repair_fraction = float(changed.mean()) if len(changed) else 0.0
-    return X_out, repair_fraction
+    row_frac = float(changed_rows.mean()) if len(changed_rows) else 0.0
+    cell_frac = float(cell_changed / n_cells) if n_cells else 0.0
+    return X_out, row_frac, cell_frac
 
 
 def augment_a0(X_train: pd.DataFrame, y_train: np.ndarray) -> AugmentResult:
@@ -248,7 +269,7 @@ def augment_a3_tabddpm_via_subprocess(
         method="A3_TabDDPM",
         generator_fit_seconds=float(status.get("fit_seconds", wall)),
         generator_sample_seconds=float(status.get("sample_seconds", 0.0)),
-        scientific_mark=smoke_config.get("mark", "SMOKE_ONLY_NOT_SCIENTIFIC"),
+        scientific_mark=smoke_config.get("mark", "") if smoke_config.get("scientific_mode") else smoke_config.get("mark", "SMOKE_ONLY_NOT_SCIENTIFIC"),
         extra=status,
     )
 

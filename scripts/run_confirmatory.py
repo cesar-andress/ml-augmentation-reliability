@@ -35,6 +35,19 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     logging.basicConfig(level=getattr(logging, args.log_level))
 
+    # Safety: refuse accidental live confirmatory unless dry-run or explicit env override
+    # (toy/integration tests import ConfirmatoryRunner directly with adapters).
+    if not args.dry_run:
+        import os
+
+        if os.environ.get("CONFIRMATORY_LIVE_AUTHORIZED") != "YES":
+            print(
+                "REFUSING live confirmatory execution without CONFIRMATORY_LIVE_AUTHORIZED=YES.\n"
+                "Use --dry-run, or authorize only when READY_FOR_CONFIRMATORY_EXECUTION == YES.",
+                file=sys.stderr,
+            )
+            return 2
+
     cfg = ConfirmatoryRunConfig(
         repo_root=ROOT,
         dataset_id=args.dataset_id,

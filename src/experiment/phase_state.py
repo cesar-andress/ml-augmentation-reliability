@@ -16,9 +16,10 @@ class PhaseConflictError(RuntimeError):
 
 
 class PhaseStateManager:
-    def __init__(self, status_path: Path, *, config_hash: str):
+    def __init__(self, status_path: Path, *, config_hash: str, allow_hash_mismatch_reset: bool = False):
         self.status_path = status_path
         self.config_hash = config_hash
+        self.allow_hash_mismatch_reset = allow_hash_mismatch_reset
         self.status_path.parent.mkdir(parents=True, exist_ok=True)
         self._state = self._load_or_init()
 
@@ -26,6 +27,11 @@ class PhaseStateManager:
         if self.status_path.exists():
             state = json.loads(self.status_path.read_text(encoding="utf-8"))
             if state.get("config_hash") and state["config_hash"] != self.config_hash:
+                if self.allow_hash_mismatch_reset:
+                    return {
+                        "config_hash": self.config_hash,
+                        "phases": {p: {"status": "PLANNED"} for p in PHASES},
+                    }
                 raise PhaseConflictError(
                     f"unit config_hash mismatch: stored={state['config_hash']!r} current={self.config_hash!r}"
                 )

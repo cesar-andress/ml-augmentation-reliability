@@ -93,10 +93,74 @@ cd ~/papers/ml/ml
 # writes results/raw/smoke_results.parquet
 ```
 
+## Confirmatory runner (Protocol v1.2.1)
+
+Canonical entry point:
+
+```bash
+cd ~/papers/ml/ml
+.venv_main/bin/python scripts/run_confirmatory.py \
+  --dataset-id 44 \
+  --repeat 0 \
+  --fold 0
+```
+
+**DO NOT RUN UNTIL READY_FOR_CONFIRMATORY_EXECUTION == YES.**
+
+Safety: live mode also requires `CONFIRMATORY_LIVE_AUTHORIZED=YES`.
+
+Dry-run (safe; no model/data/CUDA):
+
+```bash
+.venv_main/bin/python scripts/run_confirmatory.py \
+  --dataset-id 44 \
+  --repeat 0 \
+  --fold 0 \
+  --dry-run
+```
+
+### Live phases (P00–P16)
+
+| Phase | Role |
+|---|---|
+| P00 | Freeze/config validation |
+| P01 | Load frozen OpenML dataset + checksum |
+| P02 | Outer split TRAIN/CAL-A/CAL-B/TEST |
+| P03 | TRAIN-only preprocessing |
+| P04 | Outer A1/A2/A3 artifacts (shared across learners) |
+| P05 | Inner 3-fold augmentation cache |
+| P06 | GBDT 20-config HPO |
+| P07 | A0+ compute-matched continuation |
+| P08 | Fit 18 final cells |
+| P09–P12 | CAL-A calibrators/threshold; CAL-B conformal |
+| P13 | TEST predictions (guarded) |
+| P14 | Per-cell metrics |
+| P15–P16 | Validate + finalize unit |
+
+### Resume / failure
+
+- `--resume` reuses COMPLETE phases only when input/output hashes match
+- conflicting COMPLETE outputs abort (no silent overwrite)
+- `--force-rerun-failed` reruns FAILED phases only
+
+### Output layout
+
+```
+results/confirmatory/units/d<id>_r<rep>_f<fold>/
+  manifests/ generated/ hpo/ predictions/ metrics/ postprocessing/ status/ logs/
+```
+
+### Two-env architecture
+
+- Main orchestration + learners: `.venv_main`
+- A3 TabDDPM worker: `.venv_synthcity` via file IPC (`parquet`/`npy`/`json`)
+
 ## Scientific marks
 
 - `SMOKE_ONLY_FIXED_HPARAMS` — XGBoost/CatBoost fixed configs (no 20-config HPO)
 - `SMOKE_ONLY_NOT_SCIENTIFIC` — A3 TabDDPM tiny generator settings
+- `NON_SCIENTIFIC_INTEGRATION_TEST` — toy/IPC tests only
+- `CONFIRMATORY` — live scientific cells only
 
 ## Stop conditions (intentionally not done)
 

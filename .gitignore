@@ -20,3 +20,7 @@ manuscript/
 submission/
 *.env
 .env.*
+
+# Confirmatory live/dry-run unit artifacts (local only; not Zenodo yet)
+results/confirmatory/units/
+results/confirmatory/index/
