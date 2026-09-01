@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -29,6 +30,44 @@ def _frame_checksum(X: pd.DataFrame, y: pd.Series) -> str:
     return h.hexdigest()
 
 
+def parquet_bytes_checksum(x_path: str | Path, y_path: str | Path) -> str:
+    """Freeze-compatible checksum: SHA256(X.parquet bytes || y.parquet bytes)."""
+    from pathlib import Path
+
+    x_path = Path(x_path)
+    y_path = Path(y_path)
+    h = hashlib.sha256()
+    h.update(x_path.read_bytes())
+    h.update(y_path.read_bytes())
+    return h.hexdigest()
+
+
+def cache_raw_openml(
+    openml_id: int,
+    X: pd.DataFrame,
+    y: pd.Series,
+    meta: dict[str, Any] | None = None,
+    *,
+    raw_root: str | Path | None = None,
+) -> str:
+    """Persist raw parquet cache exactly as Protocol v1.2 freeze did."""
+    from pathlib import Path
+    import json
+
+    raw_root = Path(raw_root) if raw_root else Path("data/raw/openml")
+    d = raw_root / str(openml_id)
+    d.mkdir(parents=True, exist_ok=True)
+    x_path = d / "X.parquet"
+    y_path = d / "y.parquet"
+    X.to_parquet(x_path)
+    pd.DataFrame({"y": y}).to_parquet(y_path)
+    if meta is not None:
+        (d / "meta.json").write_text(json.dumps(meta, indent=2, default=str))
+    digest = parquet_bytes_checksum(x_path, y_path)
+    (d / "raw_checksum.sha256").write_text(digest + "\n")
+    return digest
+
+
 def load_openml_raw(openml_id: int) -> DatasetBundle:
     ds = openml.datasets.get_dataset(openml_id, download_data=True)
     X, y, categorical_indicator, attribute_names = ds.get_data(
@@ -49,6 +88,77 @@ def load_openml_raw(openml_id: int) -> DatasetBundle:
         y=y.reset_index(drop=True),
         checksum=_frame_checksum(X, y),
         description=desc,
+    )
+
+
+def load_frozen_openml_raw(
+    openml_id: int,
+    *,
+    expected_raw_checksum: str | None = None,
+    expected_version: int | None = None,
+    raw_root: str | Path | None = None,
+    repo_root: str | Path | None = None,
+) -> DatasetBundle:
+    """Load confirmatory dataset using freeze-compatible parquet-byte checksum.
+
+    Prefer existing data/raw/openml/<id>/{X,y}.parquet when present.
+    Otherwise download, cache with the freeze writer, and verify checksum.
+    """
+    from pathlib import Path
+
+    repo_root = Path(repo_root) if repo_root else Path(".")
+    raw_root = Path(raw_root) if raw_root else repo_root / "data" / "raw" / "openml"
+    d = raw_root / str(openml_id)
+    x_path = d / "X.parquet"
+    y_path = d / "y.parquet"
+
+    retrieval = "cache"
+    if x_path.exists() and y_path.exists():
+        X = pd.read_parquet(x_path)
+        y = pd.read_parquet(y_path)["y"]
+        digest = parquet_bytes_checksum(x_path, y_path)
+        # recover metadata
+        import json
+
+        meta_path = d / "meta.json"
+        meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}
+        name = meta.get("name")
+        version = meta.get("version")
+        description = meta.get("description", "")
+        if name is None or version is None:
+            ds = openml.datasets.get_dataset(openml_id, download_data=False)
+            name = name or ds.name
+            version = version if version is not None else getattr(ds, "version", None)
+            description = description or (ds.description or "")[:2000]
+    else:
+        retrieval = "openml_download_then_cache"
+        bundle = load_openml_raw(openml_id)
+        meta = {
+            "openml_id": openml_id,
+            "name": bundle.name,
+            "version": bundle.version,
+            "description": bundle.description,
+            "default_target_attribute": "from_openml",
+        }
+        digest = cache_raw_openml(openml_id, bundle.X, bundle.y, meta, raw_root=raw_root)
+        X, y = bundle.X, bundle.y
+        name, version, description = bundle.name, bundle.version, bundle.description
+
+    if expected_raw_checksum and digest != expected_raw_checksum:
+        raise AssertionError(
+            f"dataset raw_checksum mismatch (parquet-bytes): got {digest}, expected {expected_raw_checksum}"
+        )
+    if expected_version is not None and int(version) != int(expected_version):
+        raise AssertionError(f"dataset version mismatch: got {version}, expected {expected_version}")
+
+    return DatasetBundle(
+        openml_id=int(openml_id),
+        name=str(name),
+        version=version,
+        X=X.reset_index(drop=True),
+        y=pd.Series(y).reset_index(drop=True).astype("category"),
+        checksum=digest,
+        description=str(description),
     )
 
 

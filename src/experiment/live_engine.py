@@ -122,9 +122,7 @@ class LivePhaseEngine:
 
     # ---- P01 ----
     def p01_load_dataset(self) -> None:
-        loader = self.ctx.adapters.resolve_load_dataset()
-        bundle = loader(int(self.ctx.dataset_id))
-        y_bin, y_meta = binarize_labels(bundle.y)
+        from src.data.openml_loader import load_frozen_openml_raw
 
         expected_checksum = self.ctx.adapters.expected_checksum
         expected_version = self.ctx.adapters.expected_version
@@ -134,16 +132,31 @@ class LivePhaseEngine:
             expected_version = expected_version if expected_version is not None else self.ctx.validation.get("dataset_version")
             expected_name = expected_name or self.ctx.validation.get("dataset_name")
 
+        if self.ctx.adapters.load_dataset is not None:
+            bundle = self.ctx.adapters.load_dataset(int(self.ctx.dataset_id))
+            if expected_checksum and bundle.checksum != expected_checksum:
+                raise AssertionError(
+                    f"dataset checksum mismatch: got {bundle.checksum}, expected {expected_checksum}"
+                )
+            retrieval_source = "adapter"
+        else:
+            bundle = load_frozen_openml_raw(
+                int(self.ctx.dataset_id),
+                expected_raw_checksum=expected_checksum,
+                expected_version=expected_version,
+                repo_root=self.ctx.repo_root,
+            )
+            retrieval_source = "frozen_parquet_cache_or_openml"
+
         if expected_version is not None and int(bundle.version) != int(expected_version):
             raise AssertionError(f"dataset version mismatch: got {bundle.version}, expected {expected_version}")
         if expected_name is not None and str(bundle.name) != str(expected_name) and self.ctx.adapters.scientific:
             raise AssertionError(f"dataset name mismatch: got {bundle.name}, expected {expected_name}")
-        if expected_checksum and bundle.checksum != expected_checksum:
-            raise AssertionError(f"dataset checksum mismatch: got {bundle.checksum}, expected {expected_checksum}")
 
         if self.ctx.adapters.scientific and int(bundle.openml_id) != int(self.ctx.dataset_id):
             raise AssertionError("OpenML ID mismatch")
 
+        y_bin, y_meta = binarize_labels(bundle.y)
         row_ids = np.arange(len(bundle.X), dtype=np.int64)
         vals, counts = np.unique(y_bin, return_counts=True)
         class_counts = {int(v): int(c) for v, c in zip(vals, counts)}
@@ -159,10 +172,11 @@ class LivePhaseEngine:
             "dataset_name": bundle.name,
             "target": y_meta,
             "raw_checksum": bundle.checksum,
+            "checksum_algorithm": "sha256(X.parquet_bytes||y.parquet_bytes)",
             "n_rows": int(len(bundle.X)),
             "n_features": int(bundle.X.shape[1]),
             "class_counts": class_counts,
-            "retrieval_source": "openml_or_adapter",
+            "retrieval_source": retrieval_source,
             "row_id_policy": "stable_integer_index_0_n_minus_1_before_split",
             "scientific": self.ctx.adapters.scientific,
             "mark": self.ctx.adapters.mark,
