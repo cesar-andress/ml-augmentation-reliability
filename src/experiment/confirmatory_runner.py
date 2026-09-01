@@ -140,11 +140,19 @@ class ConfirmatoryRunner:
                 input_hashes={"config_hash": self._config_hash},
             ):
                 self.logger.info("skip phase %s (resume reuse)", phase)
+                # Hydrate in-memory context from disk for downstream phases
+                if self.engine is not None:
+                    self.engine.hydrate_skipped_phase(phase)
+                    if phase == "P00_VALIDATE_FREEZE" and self.validation is None:
+                        self.validation = self.engine.ctx.validation
+                    elif phase == "P00_VALIDATE_FREEZE":
+                        self.engine.ctx.validation = self.validation
                 continue
             self._run_phase(phase, phase_runners[phase])
             # keep validation in sync after P00
             if phase == "P00_VALIDATE_FREEZE" and self.engine is not None:
                 self.engine.ctx.validation = self.validation
+                self.validation = self.engine.ctx.validation or self.validation
         unit_manifest = self._build_unit_manifest(dry_run=False)
         write_json(self.root / "manifests" / "unit_manifest.json", unit_manifest)
         return {

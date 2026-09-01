@@ -120,6 +120,117 @@ class LivePhaseEngine:
     def __init__(self, ctx: LiveContext):
         self.ctx = ctx
 
+    def hydrate_skipped_phase(self, phase: str) -> None:
+        """Reload in-memory context from persisted artifacts when resuming COMPLETE phases."""
+        if phase == "P00_VALIDATE_FREEZE":
+            if self.ctx.validation is None and not self.ctx.adapters.skip_freeze_validation:
+                from src.experiment.confirmatory_validation import validate_pre_run
+
+                self.ctx.validation = validate_pre_run(
+                    repo_root=self.ctx.repo_root,
+                    dataset_id=self.ctx.dataset_id,
+                    repeat=self.ctx.repeat,
+                    fold=self.ctx.fold,
+                )
+        elif phase == "P01_LOAD_DATASET":
+            self.p01_load_dataset()
+        elif phase == "P02_BUILD_SPLITS":
+            if self.ctx.bundle is None:
+                self.p01_load_dataset()
+            self.p02_build_splits()
+        elif phase == "P03_FIT_PREPROCESSING":
+            if self.ctx.split is None:
+                self.hydrate_skipped_phase("P02_BUILD_SPLITS")
+            pre_path = self.ctx.root / "manifests" / "preprocessor.pkl"
+            if pre_path.exists() and self.ctx.bundle is not None and self.ctx.split is not None:
+                with pre_path.open("rb") as f:
+                    pre = pickle.load(f)
+                X = self.ctx.bundle.X
+                split = self.ctx.split
+                parts = {
+                    "train": pre.transform(X.iloc[split.train]),
+                    "cal_a": pre.transform(X.iloc[split.cal_a]),
+                    "cal_b": pre.transform(X.iloc[split.cal_b]),
+                    "test": pre.transform(X.iloc[split.test]),
+                }
+                self.ctx.pre = pre
+                self.ctx.X_parts = parts
+                self.ctx.y_parts = {
+                    "train": self.ctx.y_bin[split.train],
+                    "cal_a": self.ctx.y_bin[split.cal_a],
+                    "cal_b": self.ctx.y_bin[split.cal_b],
+                    "test": self.ctx.y_bin[split.test],
+                }
+                self.ctx.fold_seed = int(split.seed)
+            else:
+                self.p03_fit_preprocessing()
+        elif phase == "P04_PREPARE_OUTER_AUGMENTATIONS":
+            # Reload A0–A3 from disk if present; else caller must re-run phase
+            if not self.ctx.X_parts:
+                self.hydrate_skipped_phase("P03_FIT_PREPROCESSING")
+            self.ctx.outer_aug["A0"] = augment_a0(self.ctx.X_parts["train"], self.ctx.y_parts["train"])
+            for arm in ("A1", "A2", "A3"):
+                feat = self.ctx.root / "generated" / arm / "features.parquet"
+                lab = self.ctx.root / "generated" / arm / "labels.npy"
+                man = self.ctx.root / "generated" / arm / "manifest.json"
+                if feat.exists() and lab.exists() and man.exists():
+                    from src.augmentation.arms import AugmentResult
+
+                    m = json.loads(man.read_text())
+                    X = pd.read_parquet(feat)
+                    y = np.load(lab)
+                    self.ctx.outer_aug[arm] = AugmentResult(
+                        X=X,
+                        y=y,
+                        repair_fraction=float(m.get("repair_row_fraction", 0.0)),
+                        n_synthetic=int(m.get("n_synthetic", 0)),
+                        method=str(m.get("method", arm)),
+                        generator_fit_seconds=float(m.get("generator_fit_seconds", 0.0)),
+                        generator_sample_seconds=float(m.get("generator_sample_seconds", 0.0)),
+                        scientific_mark=str(m.get("scientific_mark", "")),
+                        extra={
+                            "repair_cell_fraction": float(m.get("repair_cell_fraction", 0.0)),
+                            **(m.get("extra") or {}),
+                        },
+                    )
+                    self.ctx.generator_costs[arm] = float(
+                        m.get("generator_fit_seconds", 0.0) + m.get("generator_sample_seconds", 0.0)
+                    )
+        elif phase == "P05_PREPARE_INNER_AUGMENTATION_CACHE":
+            if not self.ctx.X_parts:
+                self.hydrate_skipped_phase("P03_FIT_PREPROCESSING")
+            # Prefer re-running cache build only if missing; hydrate from disk when complete
+            need = False
+            for arm in ("A1", "A2", "A3"):
+                for i in range(INNER_CV_FOLDS):
+                    if not (self.ctx.root / "hpo" / "inner_cache" / arm / f"fold_{i}" / "features.parquet").exists():
+                        need = True
+            if need:
+                return  # leave empty; phase should be re-run
+            # rebuild A0 inner + load augmented
+            Xtr = self.ctx.X_parts["train"]
+            ytr = self.ctx.y_parts["train"]
+            skf = StratifiedKFold(n_splits=INNER_CV_FOLDS, shuffle=True, random_state=self.ctx.fold_seed)
+            self.ctx.inner_cache = {arm: {} for arm in ("A0", "A1", "A2", "A3")}
+            for inner_i, (tr_loc, va_loc) in enumerate(skf.split(Xtr, ytr)):
+                X_v = Xtr.iloc[va_loc]
+                y_v = ytr[va_loc]
+                self.ctx.inner_cache["A0"][inner_i] = {
+                    "X_train": Xtr.iloc[tr_loc],
+                    "y_train": ytr[tr_loc],
+                    "X_val": X_v,
+                    "y_val": y_v,
+                }
+                for arm in ("A1", "A2", "A3"):
+                    path = self.ctx.root / "hpo" / "inner_cache" / arm / f"fold_{inner_i}"
+                    self.ctx.inner_cache[arm][inner_i] = {
+                        "X_train": pd.read_parquet(path / "features.parquet"),
+                        "y_train": np.load(path / "labels.npy"),
+                        "X_val": X_v,
+                        "y_val": y_v,
+                        "seed": json.loads((path / "manifest.json").read_text()).get("seed"),
+                    }
+
     # ---- P01 ----
     def p01_load_dataset(self) -> None:
         from src.data.openml_loader import load_frozen_openml_raw
