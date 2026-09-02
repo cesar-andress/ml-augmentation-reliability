@@ -1,0 +1,5 @@
+{
+  "status": "NOT EXECUTED \u2014 IMPLEMENTATION NOT VALIDATED",
+  "protocol_status": "SUPPLEMENTARY_PENDING_IMPLEMENTATION_VALIDATION",
+  "reason": "No independently verified Kenward-Roger MixedLM path; statsmodels.MixedLM not used."
+}

@@ -1,0 +1,13 @@
+{
+  "nan_log_loss": false,
+  "inf_log_loss": false,
+  "log_loss_positive": true,
+  "coverage_in_0_1": true,
+  "set_size_in_0_2": true,
+  "n_cells": 1800,
+  "duplicate_cells": false,
+  "a0plus_in_primary_bar": false,
+  "delta_recompute_ok": true,
+  "sign_patterns_1024": true,
+  "bonferroni_alpha": 0.025
+}

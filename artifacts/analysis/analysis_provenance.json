@@ -1,0 +1,59 @@
+{
+  "timestamp_utc": "2026-09-02T13:01:05.842419+00:00",
+  "git_head": "9cea826bc1ad601ecd1cb4d7802df18bcc6897ff",
+  "freeze_tag": "protocol-v1.2.1-freeze",
+  "freeze_commit": "c346440ba6da683762da92a8fb126d57e2bcab6c",
+  "protocol_v1_2_freeze_commit": "fe37655247a71986b3c4a095582ec8e793cfa29a",
+  "cohort_sha256": "209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34",
+  "canonical_identity_manifest_sha256": "bc4b7e9bfd87207626b832e529baee6a852e71f97858b35e47cfd05a097b0923",
+  "analysis_input_manifest_sha256": "fd67a1b8dac1faea3cf88986fbba5b644e2cb42b5e0465ec9175768e6fa489ad",
+  "analysis_code_sha256": {
+    "src/analysis/sign_flip.py": "b0efc73477ea30ce996a38380d620cd3563ce2e362cdae272e71cb80e056b9de",
+    "src/analysis/aggregate.py": "a3fbbc2e590b024b91c20dc755bdd7412a0e251e9f78cc564651458ad3b15248",
+    "src/analysis/load_results.py": "69dadfca60166f41d07912b06ffd0f55afb504d787eab6de6a0bf4ccd01be254",
+    "scripts/run_confirmatory_analysis.py": "ac228e19e5784438e31a9fbac5424603554496a0ff75627647ce79c2268a1401",
+    "artifacts/protocol/statistical_analysis_v1_2.yaml": "00096360c6138585f2c168e3fdede7941e8db2116858447d9af2b0ea49301d35"
+  },
+  "command": "CONFIRMATORY_ANALYSIS_AUTHORIZED=YES .venv_main/bin/python scripts/run_confirmatory_analysis.py",
+  "python": "3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-136-generic-x86_64-with-glibc2.35",
+  "packages": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5"
+  },
+  "gate": {
+    "branch": "main",
+    "protocol_v1_2_freeze_commit": "fe37655247a71986b3c4a095582ec8e793cfa29a",
+    "protocol_v1_2_1_freeze_commit": "c346440ba6da683762da92a8fb126d57e2bcab6c",
+    "cohort_sha256": "209bc80826843940da92799ca48b406a34df7e2dbafd2ff26590d092187ecb34",
+    "identity_manifest_sha256": "bc4b7e9bfd87207626b832e529baee6a852e71f97858b35e47cfd05a097b0923",
+    "gate": "PASS"
+  },
+  "H01": {
+    "D": 10,
+    "n_permutations": 1024,
+    "statistic": 4.013977606505289,
+    "p_value": 0.001953125,
+    "mean": 0.03918513995277683,
+    "sd": 0.030870698551585033,
+    "n_positive": 10,
+    "n_negative": 0,
+    "n_zero": 0
+  },
+  "H02": {
+    "D": 10,
+    "n_permutations": 1024,
+    "statistic": 1.399751357783047,
+    "p_value": 0.171875,
+    "mean": 0.011808365314786119,
+    "sd": 0.026677116353862454,
+    "n_positive": 7,
+    "n_negative": 3,
+    "n_zero": 0
+  },
+  "mixed_model": {
+    "status": "NOT EXECUTED \u2014 IMPLEMENTATION NOT VALIDATED",
+    "protocol_status": "SUPPLEMENTARY_PENDING_IMPLEMENTATION_VALIDATION",
+    "reason": "No independently verified Kenward-Roger MixedLM path; statsmodels.MixedLM not used."
+  }
+}

@@ -1,0 +1,3 @@
+effect,exact_signflip_lower,exact_signflip_upper,conventional_t_lower,conventional_t_upper,note
+mean_Delta_d,0.01665298659052286,0.06344585862897648,0.01710157255176188,0.06126870735379178,exact interval is PRIMARY; t interval is SUPPLEMENTARY; not multiplicity-adjusted
+mean_Psi_d,-0.003976847046012338,0.03151007438323539,-0.007275294100332345,0.030892024729904582,exact interval is PRIMARY; t interval is SUPPLEMENTARY; not multiplicity-adjusted

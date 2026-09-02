@@ -1,0 +1,57 @@
+[
+  {
+    "sensitivity":"S1",
+    "description":"TFM softmax temperature 0.9",
+    "mean_Delta":0.03918514,
+    "mean_Psi":0.0118083653,
+    "primary_mean_Delta":0.03918514,
+    "primary_mean_Psi":0.0118083653,
+    "direction_consistent_Delta":true,
+    "status":"EXECUTED_BUT_NONINFORMATIVE: stored p_sensitivity identical to p_primary for TabPFN\/TabICL across checked units; temperature API path did not alter confirmatory predictions. No model re-run performed.",
+    "platt_mean_Delta":null,
+    "direction_consistent_vs_platt":null,
+    "D":null,
+    "retained_ids":null,
+    "exact_signflip_p_Delta_exploratory_only":null,
+    "note":null
+  },
+  {
+    "sensitivity":"S2",
+    "description":"isotonic instead of Platt (calibrated secondary)",
+    "mean_Delta":0.0101429522,
+    "mean_Psi":0.0026863973,
+    "primary_mean_Delta":null,
+    "primary_mean_Psi":null,
+    "direction_consistent_Delta":null,
+    "status":"EXECUTED",
+    "platt_mean_Delta":0.0117845377,
+    "direction_consistent_vs_platt":true,
+    "D":null,
+    "retained_ids":null,
+    "exact_signflip_p_Delta_exploratory_only":null,
+    "note":null
+  },
+  {
+    "sensitivity":"S3",
+    "description":"exclude datasets with minority count < 400",
+    "mean_Delta":0.0488672682,
+    "mean_Psi":0.013717726,
+    "primary_mean_Delta":0.03918514,
+    "primary_mean_Psi":null,
+    "direction_consistent_Delta":true,
+    "status":"EXECUTED",
+    "platt_mean_Delta":null,
+    "direction_consistent_vs_platt":null,
+    "D":6.0,
+    "retained_ids":[
+      44,
+      1489,
+      42178,
+      46911,
+      46915,
+      46927
+    ],
+    "exact_signflip_p_Delta_exploratory_only":0.03125,
+    "note":"S3 p-value if reported is EXPLORATORY only; not confirmatory"
+  }
+]
